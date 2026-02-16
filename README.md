@@ -19,7 +19,7 @@ A comprehensive campus management system with role-based authentication and mode
 - Tailwind CSS 3.4.17
 - Radix UI Components
 - Axios for API calls
-- Craco for custom configuration
+- Vite for build tooling
 
 ### Backend
 - FastAPI 0.110.1

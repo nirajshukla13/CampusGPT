@@ -3,7 +3,7 @@ import Layout from '../../components/Layout';
 import axios from 'axios';
 import { Users, GraduationCap, UserCheck, Shield } from 'lucide-react';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
