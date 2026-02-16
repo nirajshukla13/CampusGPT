@@ -3,7 +3,7 @@ import Layout from '../../components/Layout';
 import axios from 'axios';
 import { FileText, Users, TrendingUp } from 'lucide-react';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function FacultyDashboard() {
   const [dashboardData, setDashboardData] = useState(null);

@@ -16,10 +16,10 @@ A comprehensive campus management system with role-based authentication and mode
 ### Frontend
 - React 19.0.0
 - React Router DOM 7.5.1
+- Vite 6.0.11 (Build Tool)
 - Tailwind CSS 3.4.17
 - Radix UI Components
 - Axios for API calls
-- Craco for custom configuration
 
 ### Backend
 - FastAPI 0.110.1
@@ -88,8 +88,7 @@ npm install
 #### Configure Frontend Environment
 Create a `.env` file in the `frontend` folder:
 ```env
-REACT_APP_BACKEND_URL=http://localhost:8000
-ENABLE_HEALTH_CHECK=false
+VITE_BACKEND_URL=http://localhost:8000
 ```
 
 ## 🚀 Running the Application
