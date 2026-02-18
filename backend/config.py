@@ -1,0 +1,24 @@
+import os
+from dotenv import load_dotenv
+from pathlib import Path
+
+ROOT_DIR = Path(__file__).parent
+load_dotenv(ROOT_DIR / '.env')
+
+class Settings:
+    # MongoDB
+    MONGO_URL: str = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
+    DB_NAME: str = os.environ.get('DB_NAME', 'campusgpt')
+    
+    # JWT
+    JWT_SECRET_KEY: str = os.environ.get('JWT_SECRET_KEY', 'your-secret-key-change-in-production')
+    JWT_ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440
+    
+    # CORS
+    CORS_ORIGINS: str = os.environ.get('CORS_ORIGINS', '*')
+    
+    # API
+    API_PREFIX: str = "/api"
+    
+settings = Settings()

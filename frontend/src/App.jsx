@@ -1,17 +1,19 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './pages/Login';
-import Profile from './pages/Profile';
-import StudentDashboard from './pages/student/Dashboard';
-import StudentChat from './pages/student/Chat';
-import StudentHistory from './pages/student/History';
-import FacultyDashboard from './pages/faculty/Dashboard';
-import FacultyUpload from './pages/faculty/Upload';
-import FacultyInsights from './pages/faculty/Insights';
-import AdminDashboard from './pages/admin/Dashboard';
-import AdminUsers from './pages/admin/Users';
-import AdminMonitor from './pages/admin/Monitor';
-import ProtectedRoute from './components/ProtectedRoute';
+import Login from './pages/Login.jsx';
+import Profile from './pages/Profile.jsx';
+import StudentDashboard from './pages/student/Dashboard.jsx';
+import StudentChat from './pages/student/Chat.jsx';
+import StudentHistory from './pages/student/History.jsx';
+import StudentEvents from './pages/student/Events.jsx';
+import StudentResources from './pages/student/Resources.jsx';
+import FacultyDashboard from './pages/faculty/Dashboard.jsx';
+import FacultyUpload from './pages/faculty/Upload.jsx';
+import FacultyInsights from './pages/faculty/Insights.jsx';
+import AdminDashboard from './pages/admin/Dashboard.jsx';
+import AdminUsers from './pages/admin/Users.jsx';
+import AdminMonitor from './pages/admin/Monitor.jsx';
+import ProtectedRoute from './components/ProtectedRoute.jsx';
 import './App.css';
 
 function App() {
@@ -35,6 +37,16 @@ function App() {
         <Route path="/student/history" element={
           <ProtectedRoute allowedRoles={['student']}>
             <StudentHistory />
+          </ProtectedRoute>
+        } />
+        <Route path="/student/events" element={
+          <ProtectedRoute allowedRoles={['student']}>
+            <StudentEvents />
+          </ProtectedRoute>
+        } />
+        <Route path="/student/resources" element={
+          <ProtectedRoute allowedRoles={['student']}>
+            <StudentResources />
           </ProtectedRoute>
         } />
         <Route path="/student/profile" element={
