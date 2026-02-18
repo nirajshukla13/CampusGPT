@@ -1,131 +1,166 @@
 import React from 'react';
 import Layout from '../../components/Layout';
 import { Activity, Server, Database, Cpu } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 
 export default function AdminMonitor() {
   return (
     <Layout role="admin">
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">System Monitor</h1>
-            <p className="text-gray-400 text-lg">Real-time system health and performance metrics</p>
-          </div>
+      <div className="space-y-8">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-semibold md:text-3xl">System monitor</h1>
+          <p className="text-sm text-[#9CA3AF] md:text-base">
+            Real-time system health and performance metrics.
+          </p>
+        </div>
 
-          {/* System Health */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div className="bg-gray-800/50 rounded-lg border border-gray-700 backdrop-blur-sm p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center">
-                  <Server className="text-white" size={20} />
+        {/* System Health */}
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <Card className="border border-[#1F2937] bg-[#111827] shadow-md shadow-black/20">
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#1F2937] text-[#F9FAFB]">
+                  <Server size={18} />
                 </div>
-                <h3 className="font-semibold text-white">Server Status</h3>
+                <CardTitle className="text-sm font-semibold text-[#F9FAFB]">
+                  Server status
+                </CardTitle>
               </div>
-              <div className="space-y-3">
-                <div className="flex justify-between p-3 bg-gray-700/30 border border-gray-600 rounded-lg">
-                  <span className="text-gray-300">Status</span>
-                  <span className="font-medium text-emerald-400">Online</span>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex items-center justify-between rounded-lg border border-[#1F2937] bg-[#020617] px-3 py-2 text-sm">
+                <span className="text-[#E5E7EB]">Status</span>
+                <span className="font-medium text-[#10B981]">Online</span>
+              </div>
+              <div className="flex items-center justify-between rounded-lg border border-[#1F2937] bg-[#020617] px-3 py-2 text-sm">
+                <span className="text-[#E5E7EB]">Uptime</span>
+                <span className="font-medium text-[#F9FAFB]">15 days 7 hours</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border border-[#1F2937] bg-[#111827] shadow-md shadow-black/20">
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#1F2937] text-[#F9FAFB]">
+                  <Database size={18} />
                 </div>
-                <div className="flex justify-between p-3 bg-gray-700/30 border border-gray-600 rounded-lg">
-                  <span className="text-gray-300">Uptime</span>
-                  <span className="font-medium text-white">15 days 7 hours</span>
+                <CardTitle className="text-sm font-semibold text-[#F9FAFB]">Database</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex items-center justify-between rounded-lg border border-[#1F2937] bg-[#020617] px-3 py-2 text-sm">
+                <span className="text-[#E5E7EB]">Status</span>
+                <span className="font-medium text-[#10B981]">Connected</span>
+              </div>
+              <div className="flex items-center justify-between rounded-lg border border-[#1F2937] bg-[#020617] px-3 py-2 text-sm">
+                <span className="text-[#E5E7EB]">Collections</span>
+                <span className="font-medium text-[#F9FAFB]">5</span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Performance Metrics */}
+        <Card className="border border-[#1F2937] bg-[#111827] shadow-md shadow-black/20">
+          <CardHeader>
+            <CardTitle className="text-base font-semibold text-[#F9FAFB]">
+              Performance metrics
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+              <div>
+                <div className="mb-2 flex items-center gap-2">
+                  <Cpu size={16} className="text-[#6366F1]" />
+                  <span className="text-xs font-medium text-[#E5E7EB]">CPU usage</span>
+                </div>
+                <div className="flex items-end gap-2">
+                  <span className="text-xl font-semibold text-[#F9FAFB]">32%</span>
+                  <span className="mb-1 text-xs text-[#9CA3AF]">Average</span>
+                </div>
+                <div className="mt-2 h-2 w-full rounded-full bg-[#1F2937]">
+                  <div
+                    className="h-2 rounded-full bg-[#6366F1]"
+                    style={{ width: '32%' }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <div className="mb-2 flex items-center gap-2">
+                  <Activity size={16} className="text-[#A855F7]" />
+                  <span className="text-xs font-medium text-[#E5E7EB]">Memory usage</span>
+                </div>
+                <div className="flex items-end gap-2">
+                  <span className="text-xl font-semibold text-[#F9FAFB]">58%</span>
+                  <span className="mb-1 text-xs text-[#9CA3AF]">Of 8GB</span>
+                </div>
+                <div className="mt-2 h-2 w-full rounded-full bg-[#1F2937]">
+                  <div
+                    className="h-2 rounded-full bg-[#A855F7]"
+                    style={{ width: '58%' }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <div className="mb-2 flex items-center gap-2">
+                  <Database size={16} className="text-[#10B981]" />
+                  <span className="text-xs font-medium text-[#E5E7EB]">Storage used</span>
+                </div>
+                <div className="flex items-end gap-2">
+                  <span className="text-xl font-semibold text-[#F9FAFB]">2.4GB</span>
+                  <span className="mb-1 text-xs text-[#9CA3AF]">Of 50GB</span>
+                </div>
+                <div className="mt-2 h-2 w-full rounded-full bg-[#1F2937]">
+                  <div
+                    className="h-2 rounded-full bg-[#10B981]"
+                    style={{ width: '4.8%' }}
+                  />
                 </div>
               </div>
             </div>
+          </CardContent>
+        </Card>
 
-            <div className="bg-gray-800/50 rounded-lg border border-gray-700 backdrop-blur-sm p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
-                  <Database className="text-white" size={20} />
-                </div>
-                <h3 className="font-semibold text-white">Database</h3>
-              </div>
-              <div className="space-y-3">
-                <div className="flex justify-between p-3 bg-gray-700/30 border border-gray-600 rounded-lg">
-                  <span className="text-gray-300">Status</span>
-                  <span className="font-medium text-emerald-400">Connected</span>
-                </div>
-                <div className="flex justify-between p-3 bg-gray-700/30 border border-gray-600 rounded-lg">
-                  <span className="text-gray-300">Collections</span>
-                  <span className="font-medium text-white">5</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Performance Metrics */}
-          <div className="bg-gray-800/50 rounded-lg border border-gray-700 backdrop-blur-sm p-6 mb-8">
-            <h2 className="text-xl font-semibold text-white mb-6">Performance Metrics</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <Cpu size={18} className="text-blue-400" />
-                  <span className="text-sm font-medium text-gray-300">CPU Usage</span>
-                </div>
-                <div className="flex items-end gap-2">
-                  <span className="text-2xl font-bold text-white">32%</span>
-                  <span className="text-sm text-gray-400 mb-1">Average</span>
-                </div>
-                <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
-                  <div className="bg-gradient-to-r from-blue-500 to-cyan-500 h-2 rounded-full" style={{ width: '32%' }}></div>
-                </div>
-              </div>
-
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <Activity size={18} className="text-purple-400" />
-                  <span className="text-sm font-medium text-gray-300">Memory Usage</span>
-                </div>
-                <div className="flex items-end gap-2">
-                  <span className="text-2xl font-bold text-white">58%</span>
-                  <span className="text-sm text-gray-400 mb-1">Of 8GB</span>
-                </div>
-                <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
-                  <div className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full" style={{ width: '58%' }}></div>
-                </div>
-              </div>
-
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <Database size={18} className="text-emerald-400" />
-                  <span className="text-sm font-medium text-gray-300">Storage Used</span>
-                </div>
-                <div className="flex items-end gap-2">
-                  <span className="text-2xl font-bold text-white">2.4GB</span>
-                  <span className="text-sm text-gray-400 mb-1">Of 50GB</span>
-                </div>
-                <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
-                  <div className="bg-gradient-to-r from-emerald-500 to-teal-500 h-2 rounded-full" style={{ width: '4.8%' }}></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Activity Log */}
-          <div className="bg-gray-800/50 rounded-lg border border-gray-700 backdrop-blur-sm p-6">
-            <h2 className="text-xl font-semibold text-white mb-4">Recent Activity</h2>
-            <div className="space-y-3">
+        {/* Activity Log */}
+        <Card className="border border-[#1F2937] bg-[#111827] shadow-md shadow-black/20">
+          <CardHeader>
+            <CardTitle className="text-base font-semibold text-[#F9FAFB]">
+              Recent activity
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3 text-sm">
               {[
                 { time: '2 min ago', event: 'New user registered', type: 'success' },
                 { time: '15 min ago', event: 'Database backup completed', type: 'success' },
                 { time: '1 hour ago', event: 'System maintenance scheduled', type: 'info' },
-                { time: '3 hours ago', event: 'API rate limit reached', type: 'warning' }
+                { time: '3 hours ago', event: 'API rate limit reached', type: 'warning' },
               ].map((log, idx) => (
-                <div key={idx} className="flex items-center justify-between p-4 bg-gray-700/30 border border-gray-600 rounded-lg hover:bg-gray-700/50 transition-all">
+                <div
+                  key={idx}
+                  className="flex items-center justify-between rounded-lg border border-[#1F2937] bg-[#020617] px-4 py-3"
+                >
                   <div className="flex items-center gap-3">
-                    <div className={`w-2 h-2 rounded-full ${
-                      log.type === 'success' ? 'bg-emerald-400' :
-                      log.type === 'warning' ? 'bg-amber-400' :
-                      'bg-blue-400'
-                    }`}></div>
-                    <span className="text-white">{log.event}</span>
+                    <span
+                      className={`h-2 w-2 rounded-full ${
+                        log.type === 'success'
+                          ? 'bg-[#10B981]'
+                          : log.type === 'warning'
+                          ? 'bg-[#F59E0B]'
+                          : 'bg-[#6366F1]'
+                      }`}
+                    />
+                    <span className="text-[#E5E7EB]">{log.event}</span>
                   </div>
-                  <span className="text-sm text-gray-400">{log.time}</span>
+                  <span className="text-xs text-[#9CA3AF]">{log.time}</span>
                 </div>
               ))}
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </Layout>
   );

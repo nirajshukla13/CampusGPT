@@ -7,6 +7,8 @@ import StudentChat from './pages/student/Chat.jsx';
 import StudentHistory from './pages/student/History.jsx';
 import StudentEvents from './pages/student/Events.jsx';
 import StudentResources from './pages/student/Resources.jsx';
+import Architecture from './pages/student/Architecture.jsx';
+import Workflow from './pages/student/Workflow.jsx';
 import FacultyDashboard from './pages/faculty/Dashboard.jsx';
 import FacultyUpload from './pages/faculty/Upload.jsx';
 import FacultyInsights from './pages/faculty/Insights.jsx';
@@ -47,6 +49,16 @@ function App() {
         <Route path="/student/resources" element={
           <ProtectedRoute allowedRoles={['student']}>
             <StudentResources />
+          </ProtectedRoute>
+        } />
+        <Route path="/student/architecture" element={
+          <ProtectedRoute allowedRoles={['student']}>
+            <Architecture />
+          </ProtectedRoute>
+        } />
+        <Route path="/student/workflow" element={
+          <ProtectedRoute allowedRoles={['student']}>
+            <Workflow />
           </ProtectedRoute>
         } />
         <Route path="/student/profile" element={

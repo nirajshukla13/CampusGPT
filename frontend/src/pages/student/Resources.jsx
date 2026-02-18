@@ -3,6 +3,8 @@ import Layout from '../../components/Layout';
 import { BookOpen, FileText, Video, Download, Search, Star, TrendingUp, Clock, Eye, Filter, Link as LinkIcon } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
+import { Input } from '../../components/ui/input';
+import { Button } from '../../components/ui/button';
 
 export default function StudentResources() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -135,212 +137,208 @@ export default function StudentResources() {
     }
   };
 
-  const getTypeColor = (type) => {
-    const colors = {
-      'PDF': 'from-red-500 to-pink-500',
-      'Video': 'from-blue-500 to-cyan-500',
-      'Link': 'from-emerald-500 to-teal-500',
-      'Slides': 'from-amber-500 to-orange-500'
-    };
-    return colors[type] || 'from-gray-500 to-gray-600';
-  };
-
   return (
     <Layout role="student">
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
-              Learning Resources
-            </h1>
-            <p className="text-gray-400 text-lg">Access study materials, lectures, and educational content</p>
-          </div>
+      <div className="space-y-8">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-semibold md:text-3xl">Learning resources</h1>
+          <p className="text-sm text-muted-foreground md:text-base">
+            Access study materials, lectures, and educational content.
+          </p>
+        </div>
 
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <Card className="bg-gray-800/50 border-gray-700 backdrop-blur-sm hover:bg-gray-800/70 transition-all">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-gray-400 text-sm mb-1">Total Resources</p>
-                    <p className="text-3xl font-bold text-white">{resources.length}</p>
-                  </div>
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
-                    <BookOpen className="text-white" size={24} />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gray-800/50 border-gray-700 backdrop-blur-sm hover:bg-gray-800/70 transition-all">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-gray-400 text-sm mb-1">Downloads</p>
-                    <p className="text-3xl font-bold text-white">8.6K</p>
-                  </div>
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
-                    <Download className="text-white" size={24} />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gray-800/50 border-gray-700 backdrop-blur-sm hover:bg-gray-800/70 transition-all">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-gray-400 text-sm mb-1">Total Views</p>
-                    <p className="text-3xl font-bold text-white">34.6K</p>
-                  </div>
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-                    <Eye className="text-white" size={24} />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gray-800/50 border-gray-700 backdrop-blur-sm hover:bg-gray-800/70 transition-all">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-gray-400 text-sm mb-1">New Today</p>
-                    <p className="text-3xl font-bold text-white">3</p>
-                  </div>
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
-                    <TrendingUp className="text-white" size={24} />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Search Bar */}
-          <Card className="bg-gray-800/50 border-gray-700 backdrop-blur-sm mb-6">
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
+          <Card className="border border-border bg-card shadow-md shadow-black/20">
             <CardContent className="p-6">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search resources by title, subject, or description..."
-                  className="w-full pl-12 pr-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-white placeholder-gray-400 transition-all"
-                />
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="mb-1 text-sm text-muted-foreground">Total resources</p>
+                  <p className="text-2xl font-semibold text-foreground">{resources.length}</p>
+                </div>
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-2 text-foreground">
+                  <BookOpen size={20} />
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Type Filter */}
-          <Card className="bg-gray-800/50 border-gray-700 backdrop-blur-sm mb-8">
+          <Card className="border border-border bg-card shadow-md shadow-black/20">
             <CardContent className="p-6">
-              <div className="flex items-center gap-3 overflow-x-auto">
-                <Filter className="text-gray-400" size={20} />
-                {resourceTypes.map((type) => (
-                  <button
-                    key={type}
-                    onClick={() => setSelectedType(type.toLowerCase())}
-                    className={`px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
-                      selectedType === type.toLowerCase()
-                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-purple-500/30'
-                        : 'bg-gray-700/30 text-gray-300 hover:bg-gray-700/50 border border-gray-600'
-                    }`}
-                  >
-                    {type}
-                  </button>
-                ))}
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="mb-1 text-sm text-muted-foreground">Downloads</p>
+                  <p className="text-2xl font-semibold text-foreground">8.6K</p>
+                </div>
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-2 text-foreground">
+                  <Download size={20} />
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Resources Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {filteredResources.map((resource) => {
-              const TypeIcon = getTypeIcon(resource.type);
-              return (
-                <Card 
-                  key={resource.id}
-                  className="bg-gray-800/50 border-gray-700 backdrop-blur-sm hover:bg-gray-800/70 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-purple-500/10"
+          <Card className="border border-border bg-card shadow-md shadow-black/20">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="mb-1 text-sm text-muted-foreground">Total views</p>
+                  <p className="text-2xl font-semibold text-foreground">34.6K</p>
+                </div>
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-2 text-foreground">
+                  <Eye size={20} />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border border-border bg-card shadow-md shadow-black/20">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="mb-1 text-sm text-muted-foreground">New today</p>
+                  <p className="text-2xl font-semibold text-foreground">3</p>
+                </div>
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-2 text-foreground">
+                  <TrendingUp size={20} />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Search Bar */}
+        <Card className="mb-4 border border-border bg-card shadow-md shadow-black/20">
+          <CardContent className="p-6">
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search resources by title, subject, or description..."
+                className="h-11 w-full rounded-xl border-border bg-surface-2 pl-9 text-sm text-foreground placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Type Filter */}
+        <Card className="mb-6 border border-border bg-card shadow-md shadow-black/20">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-3 overflow-x-auto">
+              <Filter className="h-4 w-4 text-muted-foreground" />
+              {resourceTypes.map((type) => (
+                <Button
+                  key={type}
+                  type="button"
+                  variant={selectedType === type.toLowerCase() ? 'default' : 'outline'}
+                  onClick={() => setSelectedType(type.toLowerCase())}
+                  className={`h-9 rounded-xl px-4 text-xs font-medium whitespace-nowrap ${
+                    selectedType === type.toLowerCase()
+                      ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                      : 'border-border bg-surface-2 text-foreground hover:bg-surface'
+                  }`}
                 >
-                  <CardHeader>
-                    <div className="flex items-start gap-4">
-                      <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${getTypeColor(resource.type)} flex items-center justify-center flex-shrink-0`}>
-                        <TypeIcon className="text-white" size={24} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Badge className="bg-gray-700/50 text-gray-300 border-gray-600">
-                            {resource.subject}
-                          </Badge>
-                          {resource.featured && (
-                            <Badge className="bg-amber-500/20 text-amber-300 border-amber-500/30">
-                              <Star className="w-3 h-3 mr-1" />
-                              Featured
-                            </Badge>
-                          )}
-                        </div>
-                        <CardTitle className="text-xl text-white mb-1">{resource.title}</CardTitle>
-                        <CardDescription className="text-gray-400 text-sm">
-                          {resource.description}
-                        </CardDescription>
-                      </div>
+                  {type}
+                </Button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Resources Grid */}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          {filteredResources.map((resource) => {
+            const TypeIcon = getTypeIcon(resource.type);
+            return (
+              <Card
+                key={resource.id}
+                className="border border-border bg-card shadow-md shadow-black/20"
+              >
+                <CardHeader>
+                  <div className="flex items-start gap-4">
+                    <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl bg-surface-2 text-foreground">
+                      <TypeIcon size={22} />
                     </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3 mb-4">
-                      <div className="flex items-center justify-between text-sm">
-                        <div className="flex items-center gap-2 text-gray-400">
-                          <Clock size={16} />
-                          <span>{resource.date}</span>
-                        </div>
-                        <Badge className={`bg-gradient-to-r ${getTypeColor(resource.type)} text-white border-0`}>
-                          {resource.type}
+                    <div className="min-w-0 flex-1">
+                      <div className="mb-2 flex items-center gap-2">
+                        <Badge className="border border-border bg-surface-2 text-xs font-medium text-foreground">
+                          {resource.subject}
                         </Badge>
-                      </div>
-                      <div className="flex items-center gap-4 text-sm text-gray-400">
-                        <div className="flex items-center gap-1">
-                          <Eye size={16} />
-                          <span>{resource.views}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Download size={16} />
-                          <span>{resource.downloads}</span>
-                        </div>
-                        {resource.size !== '-' && (
-                          <span className="text-gray-500">• {resource.size}</span>
+                        {resource.featured && (
+                          <Badge className="border border-border bg-surface-2 text-xs font-medium text-muted-foreground">
+                            <Star className="mr-1 h-3 w-3 text-primary" />
+                            Featured
+                          </Badge>
                         )}
                       </div>
-                      <div className="text-sm text-gray-400">
-                        Uploaded by <span className="text-gray-300 font-medium">{resource.uploadedBy}</span>
+                      <CardTitle className="mb-1 text-sm font-semibold text-foreground">
+                        {resource.title}
+                      </CardTitle>
+                      <CardDescription className="text-xs text-muted-foreground">
+                        {resource.description}
+                      </CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                    <div className="mb-4 space-y-3 text-xs">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                          <Clock size={14} className="text-muted-foreground" />
+                        <span>{resource.date}</span>
                       </div>
+                        <Badge className="border border-border bg-surface-2 px-3 py-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                        {resource.type}
+                      </Badge>
                     </div>
-                    <div className="flex gap-3">
-                      <button className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-3 rounded-xl hover:from-blue-500 hover:to-purple-500 transition-all font-semibold shadow-lg hover:shadow-purple-500/50 flex items-center justify-center gap-2">
-                        <Download size={18} />
-                        Download
-                      </button>
-                      <button className="px-4 py-3 bg-gray-700/30 border border-gray-600 rounded-xl text-gray-300 hover:bg-gray-700/50 transition-all">
-                        <Star size={20} />
-                      </button>
+                    <div className="flex items-center gap-4 text-muted-foreground">
+                      <div className="flex items-center gap-1">
+                        <Eye size={14} />
+                        <span>{resource.views}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Download size={14} />
+                        <span>{resource.downloads}</span>
+                      </div>
+                      {resource.size !== '-' && <span className="text-muted-foreground">• {resource.size}</span>}
                     </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-
-          {/* No Results */}
-          {filteredResources.length === 0 && (
-            <Card className="bg-gray-800/50 border-gray-700 backdrop-blur-sm">
-              <div className="p-12 text-center">
-                <BookOpen className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-                <p className="text-xl font-medium text-gray-300 mb-2">No resources found</p>
-                <p className="text-gray-500">Try adjusting your search or filters</p>
-              </div>
-            </Card>
-          )}
+                    <div className="text-muted-foreground">
+                      Uploaded by{' '}
+                      <span className="font-medium text-foreground">{resource.uploadedBy}</span>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <Button
+                      type="button"
+                      className="flex-1 h-10 rounded-xl bg-primary text-sm font-medium text-primary-foreground hover:bg-primary/90"
+                    >
+                      <Download size={16} className="mr-2" />
+                      Download
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="h-10 rounded-xl border-border bg-surface-2 text-sm text-foreground hover:bg-surface"
+                    >
+                      <Star size={18} />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
+
+        {filteredResources.length === 0 && (
+          <Card className="border border-border bg-card shadow-md shadow-black/20">
+            <div className="p-10 text-center">
+              <BookOpen className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+              <p className="mb-1 text-sm font-semibold text-foreground">No resources found</p>
+              <p className="text-xs text-muted-foreground">Try adjusting your search or filters.</p>
+            </div>
+          </Card>
+        )}
       </div>
     </Layout>
   );

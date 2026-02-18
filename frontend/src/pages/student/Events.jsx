@@ -3,6 +3,8 @@ import Layout from '../../components/Layout';
 import { Calendar, Clock, MapPin, Users, Star, Filter, Search, Bell, Bookmark, TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
+import { Input } from '../../components/ui/input';
+import { Button } from '../../components/ui/button';
 
 export default function StudentEvents() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -86,169 +88,168 @@ export default function StudentEvents() {
     return matchesSearch && matchesCategory;
   });
 
-  const getCategoryColor = (category) => {
-    const colors = {
-      'Academic': 'from-blue-500 to-cyan-500',
-      'Sports': 'from-orange-500 to-red-500',
-      'Cultural': 'from-purple-500 to-pink-500',
-      'Workshop': 'from-emerald-500 to-teal-500',
-      'Social': 'from-amber-500 to-orange-500'
-    };
-    return colors[category] || 'from-gray-500 to-gray-600';
-  };
-
   return (
     <Layout role="student">
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
-              Campus Events
-            </h1>
-            <p className="text-gray-400 text-lg">Discover and join exciting events happening on campus</p>
-          </div>
+      <div className="space-y-8">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-semibold md:text-3xl">Campus events</h1>
+          <p className="text-sm text-muted-foreground md:text-base">
+            Discover and join exciting events happening on campus.
+          </p>
+        </div>
 
-          {/* Search and Filter Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            {/* Search Bar */}
-            <div className="lg:col-span-2">
-              <Card className="bg-gray-800/50 border-gray-700 backdrop-blur-sm">
-                <CardContent className="p-6">
-                  <div className="relative">
-                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                    <input
-                      type="text"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      placeholder="Search events..."
-                      className="w-full pl-12 pr-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-white placeholder-gray-400 transition-all"
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Quick Stats */}
-            <Card className="bg-gray-800/50 border-gray-700 backdrop-blur-sm">
+        {/* Search and quick stats */}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            <Card className="border border-border bg-card shadow-md shadow-black/20">
               <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-gray-400 text-sm">Upcoming Events</p>
-                    <p className="text-3xl font-bold text-white">{events.length}</p>
-                  </div>
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
-                    <Calendar className="text-white" size={24} />
-                  </div>
+                <div className="relative">
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search events..."
+                    className="h-11 w-full rounded-xl border-border bg-surface-2 pl-9 text-sm text-foreground placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary"
+                  />
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Category Filter */}
-          <Card className="bg-gray-800/50 border-gray-700 backdrop-blur-sm mb-8">
+          <Card className="border border-border bg-card shadow-md shadow-black/20">
             <CardContent className="p-6">
-              <div className="flex items-center gap-3 overflow-x-auto">
-                <Filter className="text-gray-400" size={20} />
-                {categories.map((category) => (
-                  <button
-                    key={category}
-                    onClick={() => setSelectedCategory(category.toLowerCase())}
-                    className={`px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
-                      selectedCategory === category.toLowerCase()
-                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-purple-500/30'
-                        : 'bg-gray-700/30 text-gray-300 hover:bg-gray-700/50 border border-gray-600'
-                    }`}
-                  >
-                    {category}
-                  </button>
-                ))}
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Upcoming events</p>
+                  <p className="text-2xl font-semibold text-foreground">{events.length}</p>
+                </div>
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-2 text-foreground">
+                  <Calendar size={20} />
+                </div>
               </div>
             </CardContent>
           </Card>
-
-          {/* Events Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {filteredEvents.map((event) => (
-              <Card 
-                key={event.id}
-                className="bg-gray-800/50 border-gray-700 backdrop-blur-sm hover:bg-gray-800/70 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-purple-500/10"
-              >
-                <CardHeader>
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Badge className={`bg-gradient-to-r ${getCategoryColor(event.category)} text-white border-0`}>
-                          {event.category}
-                        </Badge>
-                        {event.featured && (
-                          <Badge className="bg-amber-500/20 text-amber-300 border-amber-500/30">
-                            <Star className="w-3 h-3 mr-1" />
-                            Featured
-                          </Badge>
-                        )}
-                      </div>
-                      <CardTitle className="text-xl text-white">{event.title}</CardTitle>
-                    </div>
-                    <button className="p-2 rounded-lg bg-gray-700/30 hover:bg-gray-700/50 border border-gray-600 transition-all">
-                      <Bookmark className="w-5 h-5 text-gray-400 hover:text-amber-400" />
-                    </button>
-                  </div>
-                  <CardDescription className="text-gray-400 mt-3">
-                    {event.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3 mb-4">
-                    <div className="flex items-center gap-3 text-gray-300">
-                      <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
-                        <Calendar size={16} className="text-blue-400" />
-                      </div>
-                      <span className="text-sm">{event.date}</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-gray-300">
-                      <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
-                        <Clock size={16} className="text-purple-400" />
-                      </div>
-                      <span className="text-sm">{event.time}</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-gray-300">
-                      <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
-                        <MapPin size={16} className="text-emerald-400" />
-                      </div>
-                      <span className="text-sm">{event.location}</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-gray-300">
-                      <div className="w-8 h-8 rounded-lg bg-pink-500/20 flex items-center justify-center">
-                        <Users size={16} className="text-pink-400" />
-                      </div>
-                      <span className="text-sm">{event.attendees} attendees</span>
-                    </div>
-                  </div>
-                  <div className="flex gap-3">
-                    <button className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-3 rounded-xl hover:from-blue-500 hover:to-purple-500 transition-all font-semibold shadow-lg hover:shadow-purple-500/50">
-                      Register Now
-                    </button>
-                    <button className="px-4 py-3 bg-gray-700/30 border border-gray-600 rounded-xl text-gray-300 hover:bg-gray-700/50 transition-all">
-                      <Bell size={20} />
-                    </button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {/* No Results */}
-          {filteredEvents.length === 0 && (
-            <Card className="bg-gray-800/50 border-gray-700 backdrop-blur-sm">
-              <div className="p-12 text-center">
-                <Calendar className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-                <p className="text-xl font-medium text-gray-300 mb-2">No events found</p>
-                <p className="text-gray-500">Try adjusting your search or filters</p>
-              </div>
-            </Card>
-          )}
         </div>
+
+        {/* Category Filter */}
+        <Card className="mb-6 border border-border bg-card shadow-md shadow-black/20">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-3 overflow-x-auto">
+              <Filter className="h-4 w-4 text-muted-foreground" />
+              {categories.map((category) => (
+                <Button
+                  key={category}
+                  type="button"
+                  variant={selectedCategory === category.toLowerCase() ? 'default' : 'outline'}
+                  onClick={() => setSelectedCategory(category.toLowerCase())}
+                  className={`h-9 rounded-xl px-4 text-xs font-medium whitespace-nowrap ${
+                    selectedCategory === category.toLowerCase()
+                      ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                      : 'border-border bg-surface-2 text-foreground hover:bg-surface'
+                  }`}
+                >
+                  {category}
+                </Button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Events Grid */}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          {filteredEvents.map((event) => (
+            <Card
+              key={event.id}
+              className="border border-border bg-card shadow-md shadow-black/20 transition-transform duration-150 hover:scale-[1.02]"
+            >
+              <CardHeader>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="mb-2 flex items-center gap-2">
+                      <Badge className="border border-border bg-surface-2 px-3 py-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                        {event.category}
+                      </Badge>
+                      {event.featured && (
+                        <Badge className="border border-border bg-surface-2 px-3 py-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                          <Star className="mr-1 h-3 w-3 text-primary" />
+                          Featured
+                        </Badge>
+                      )}
+                    </div>
+                    <CardTitle className="text-sm font-semibold text-foreground">
+                      {event.title}
+                    </CardTitle>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 rounded-lg border border-border bg-surface-2 text-muted-foreground hover:bg-surface"
+                  >
+                    <Bookmark className="h-4 w-4" />
+                  </Button>
+                </div>
+                <CardDescription className="mt-3 text-xs text-muted-foreground">
+                  {event.description}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="mb-4 space-y-3 text-xs">
+                  <div className="flex items-center gap-3 text-foreground">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-2">
+                      <Calendar size={14} className="text-primary" />
+                    </div>
+                    <span>{event.date}</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-foreground">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-2">
+                      <Clock size={14} className="text-foreground" />
+                    </div>
+                    <span>{event.time}</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-foreground">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-2">
+                      <MapPin size={14} className="text-foreground" />
+                    </div>
+                    <span>{event.location}</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-foreground">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-2">
+                      <Users size={14} className="text-primary" />
+                    </div>
+                    <span>{event.attendees} attendees</span>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <Button
+                    type="button"
+                    className="flex-1 h-10 rounded-xl bg-primary text-sm font-medium text-primary-foreground hover:bg-primary/90"
+                  >
+                    Register now
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-10 rounded-xl border-border bg-surface-2 text-sm text-foreground hover:bg-surface"
+                  >
+                    <Bell size={18} />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {filteredEvents.length === 0 && (
+          <Card className="border border-border bg-card shadow-md shadow-black/20">
+            <div className="p-10 text-center">
+              <Calendar className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+              <p className="mb-1 text-sm font-semibold text-foreground">No events found</p>
+              <p className="text-xs text-muted-foreground">Try adjusting your search or filters.</p>
+            </div>
+          </Card>
+        )}
       </div>
     </Layout>
   );

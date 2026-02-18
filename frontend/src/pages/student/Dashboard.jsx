@@ -2,26 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../../components/Layout';
 import axios from 'axios';
-import { 
-  Search, 
-  Clock, 
-  MessageSquare, 
-  TrendingUp, 
-  BookOpen, 
-  Calendar, 
+import {
+  Search,
+  Clock,
+  MessageSquare,
+  TrendingUp,
+  BookOpen,
+  Calendar,
   Award,
   Bookmark,
   History,
   Sparkles,
-  BarChart3,
   Zap,
   Target,
-  Star,
   ArrowRight,
-  Menu
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
+import { Input } from '../../components/ui/input';
+import { Button } from '../../components/ui/button';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -47,41 +46,37 @@ export default function StudentDashboard() {
   };
 
   const stats = [
-    { 
-      icon: MessageSquare, 
-      label: 'Total Queries', 
-      value: dashboardData?.stats?.total_queries || '0', 
-      change: '+12%',
-      color: 'from-blue-500 to-cyan-500'
+    {
+      icon: MessageSquare,
+      label: 'Total Queries',
+      value: dashboardData?.stats?.total_queries || '0',
+      helper: 'All-time CampusGPT questions',
     },
-    { 
-      icon: History, 
-      label: 'This Week', 
-      value: dashboardData?.stats?.weekly_queries || '0', 
-      change: '+8%',
-      color: 'from-purple-500 to-pink-500'
+    {
+      icon: History,
+      label: 'This Week',
+      value: dashboardData?.stats?.weekly_queries || '0',
+      helper: 'Queries in the last 7 days',
     },
-    { 
-      icon: Bookmark, 
-      label: 'Saved', 
-      value: dashboardData?.stats?.saved_queries || '0', 
-      change: '+5',
-      color: 'from-emerald-500 to-teal-500'
+    {
+      icon: Bookmark,
+      label: 'Saved',
+      value: dashboardData?.stats?.saved_queries || '0',
+      helper: 'Bookmarked answers',
     },
-    { 
-      icon: Award, 
-      label: 'Streak', 
-      value: dashboardData?.stats?.streak || '0', 
-      change: 'days',
-      color: 'from-amber-500 to-orange-500'
-    }
+    {
+      icon: Award,
+      label: 'Streak',
+      value: dashboardData?.stats?.streak || '0',
+      helper: 'Consecutive active days',
+    },
   ];
 
   const quickActions = [
-    { icon: Search, label: 'New Query', color: 'bg-blue-500', link: '/student/chat' },
-    { icon: History, label: 'History', color: 'bg-purple-500', link: '/student/history' },
-    { icon: BookOpen, label: 'Resources', color: 'bg-emerald-500', link: '/student/resources' },
-    { icon: Calendar, label: 'Events', color: 'bg-amber-500', link: '/student/events' }
+    { icon: Search, label: 'New Query', link: '/student/chat' },
+    { icon: History, label: 'History', link: '/student/history' },
+    { icon: BookOpen, label: 'Resources', link: '/student/resources' },
+    { icon: Calendar, label: 'Events', link: '/student/events' },
   ];
 
   const trendingTopics = [
@@ -91,227 +86,233 @@ export default function StudentDashboard() {
     { topic: 'Campus Events', queries: 28, icon: Sparkles }
   ];
 
+  const suggestions = ['Library hours', 'Course schedule', 'Campus map', 'Dining options'];
+
   return (
     <Layout role="student">
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          
-          {/* Header Section */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
-                  Welcome back!
-                </h1>
-                <p className="text-gray-400 text-lg">Ready to explore your campus knowledge?</p>
-              </div>
-              <div className="hidden md:flex items-center gap-2">
-                <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white border-0 px-4 py-2">
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  Premium Student
-                </Badge>
-              </div>
-            </div>
+      <div className="space-y-8">
+        {/* Header Section */}
+        <div className="flex items-start justify-between gap-4">
+          <div className="space-y-1">
+            <h1 className="text-2xl font-semibold md:text-3xl">Student dashboard</h1>
+            <p className="text-sm text-muted-foreground md:text-base">
+              Track your CampusGPT usage and jump back into your work.
+            </p>
           </div>
+          <div className="hidden h-6 w-24 md:block" />
+        </div>
 
-          {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {stats.map((stat, index) => {
-              const Icon = stat.icon;
-              return (
-                <Card key={index} className="bg-gray-800/50 border-gray-700 backdrop-blur-sm hover:bg-gray-800/70 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/10">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                        <Icon className="w-6 h-6 text-white" />
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+          {stats.map((stat) => {
+            const Icon = stat.icon;
+            return (
+              <Card
+                key={stat.label}
+                className="bg-card border border-border rounded-xl shadow-md shadow-black/20"
+              >
+                <CardContent className="p-6">
+                  <div className="mb-4 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-2 text-foreground">
+                        <Icon className="h-5 w-5" />
                       </div>
-                      <span className="text-emerald-400 text-sm font-semibold">{stat.change}</span>
-                    </div>
-                    <p className="text-gray-400 text-sm mb-1">{stat.label}</p>
-                    <p className="text-3xl font-bold text-white">{stat.value}</p>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-
-          {/* Main Content Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            
-            {/* CampusGPT Search - Takes 2 columns */}
-            <div className="lg:col-span-2">
-              <Card className="bg-gradient-to-br from-gray-800/90 to-gray-800/50 border-gray-700 backdrop-blur-sm h-full">
-                <CardHeader>
-                  <CardTitle className="text-2xl text-white flex items-center gap-2">
-                    <Sparkles className="w-6 h-6 text-purple-400" />
-                    Ask CampusGPT
-                  </CardTitle>
-                  <CardDescription className="text-gray-400">
-                    Get instant answers about campus life, courses, and more
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="relative group">
-                    <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-xl blur opacity-30 group-hover:opacity-50 transition duration-200"></div>
-                    <div className="relative">
-                      <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 z-10" size={20} />
-                      <input
-                        type="text"
-                        data-testid="campus-gpt-search-input"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="Ask anything about your campus..."
-                        className="w-full pl-12 pr-4 py-4 bg-gray-800/90 border border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-white placeholder-gray-400 transition-all"
-                      />
+                      <span className="text-sm font-medium text-muted-foreground">
+                        {stat.label}
+                      </span>
                     </div>
                   </div>
-                  <button
-                    data-testid="search-button"
-                    className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white px-6 py-4 rounded-xl hover:from-blue-500 hover:via-purple-500 hover:to-pink-500 transition-all duration-300 font-semibold text-lg shadow-lg hover:shadow-purple-500/50 flex items-center justify-center gap-2"
-                  >
-                    <Zap className="w-5 h-5" />
-                    Get Answer
-                    <ArrowRight className="w-5 h-5" />
-                  </button>
-                  
-                  {/* Suggested Queries */}
-                  <div className="pt-4">
-                    <p className="text-gray-400 text-sm mb-3 flex items-center gap-2">
-                      <Sparkles className="w-4 h-4" />
-                      Try asking:
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {['Library hours', 'Course schedule', 'Campus map', 'Dining options'].map((suggestion, i) => (
-                        <button 
-                          key={i}
-                          onClick={() => setSearchQuery(suggestion)}
-                          className="px-3 py-1.5 bg-gray-700/50 hover:bg-gray-700 border border-gray-600 rounded-lg text-gray-300 text-sm transition-all hover:scale-105"
-                        >
-                          {suggestion}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+                  <p className="text-2xl font-semibold text-foreground">{stat.value}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{stat.helper}</p>
                 </CardContent>
               </Card>
-            </div>
+            );
+          })}
+        </div>
 
-            {/* Quick Actions */}
-            <div>
-              <Card className="bg-gray-800/50 border-gray-700 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="text-xl text-white flex items-center gap-2">
-                    <Zap className="w-5 h-5 text-amber-400" />
-                    Quick Actions
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {quickActions.map((action, index) => {
-                    const Icon = action.icon;
-                    return (
-                      <button
-                        key={index}
-                        onClick={() => navigate(action.link)}
-                        className="w-full flex items-center gap-4 p-4 bg-gray-700/30 hover:bg-gray-700/50 border border-gray-600 rounded-xl transition-all hover:scale-105 group"
-                      >
-                        <div className={`w-10 h-10 ${action.color} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform`}>
-                          <Icon className="w-5 h-5 text-white" />
-                        </div>
-                        <span className="text-white font-medium">{action.label}</span>
-                        <ArrowRight className="w-4 h-4 text-gray-400 ml-auto group-hover:text-white transition-colors" />
-                      </button>
-                    );
-                  })}
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-
-          {/* Bottom Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            
-            {/* Recent Queries */}
-            <Card className="bg-gray-800/50 border-gray-700 backdrop-blur-sm">
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          {/* Ask CampusGPT */}
+          <div className="lg:col-span-2">
+            <Card className="h-full bg-card border border-border rounded-xl shadow-md shadow-black/20">
               <CardHeader>
-                <CardTitle className="text-xl text-white flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-blue-400" />
-                  Recent Queries
+                <CardTitle className="flex items-center gap-2 text-lg font-semibold text-foreground">
+                  <Sparkles className="h-5 w-5 text-primary" />
+                  Ask CampusGPT
                 </CardTitle>
-                <CardDescription className="text-gray-400">
-                  Your latest conversations
+                <CardDescription className="text-sm text-muted-foreground">
+                  Get instant answers about campus life, courses, and more.
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                {dashboardData?.recent_queries ? (
-                  <div className="space-y-3">
-                    {dashboardData.recent_queries.map((query) => (
-                      <div
-                        key={query.id}
-                        data-testid={`recent-query-${query.id}`}
-                        className="flex items-start gap-3 p-4 bg-gray-700/30 hover:bg-gray-700/50 rounded-xl border border-gray-600 transition-all hover:scale-102 cursor-pointer group"
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="relative">
+                    <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                      type="text"
+                      data-testid="campus-gpt-search-input"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Ask anything about your campus..."
+                      className="h-11 w-full rounded-xl border-border bg-surface-2 pl-9 text-sm text-foreground placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary"
+                    />
+                  </div>
+                  <Button
+                    type="button"
+                    data-testid="search-button"
+                    className="h-10 w-full rounded-xl bg-primary text-sm font-medium text-primary-foreground hover:bg-primary/90"
+                  >
+                    <Zap className="mr-2 h-4 w-4" />
+                    Get answer
+                    <ArrowRight className="ml-1 h-4 w-4" />
+                  </Button>
+                </div>
+
+                {/* Suggested Queries */}
+                <div className="pt-2">
+                  <p className="mb-2 flex items-center gap-2 text-xs font-medium text-[#9CA3AF]">
+                    <Sparkles className="h-3 w-3 text-[#22D3EE]" />
+                    Try asking:
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {suggestions.map((suggestion) => (
+                      <Badge
+                        key={suggestion}
+                        type="button"
+                        asChild={false}
+                        className="cursor-pointer rounded-full border-0 bg-[#1F2937] px-3 py-1 text-xs font-normal text-[#E5E7EB] hover:bg-[#111827]"
+                        onClick={() => setSearchQuery(suggestion)}
                       >
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center flex-shrink-0">
-                          <MessageSquare size={16} className="text-white" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-white group-hover:text-blue-300 transition-colors">{query.query}</p>
-                          <p className="text-sm text-gray-400 mt-1">{query.timestamp}</p>
-                        </div>
-                        <ArrowRight className="w-4 h-4 text-gray-500 group-hover:text-white transition-colors flex-shrink-0" />
-                      </div>
+                        {suggestion}
+                      </Badge>
                     ))}
                   </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <MessageSquare className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-                    <p className="text-gray-400">No recent queries</p>
-                    <p className="text-gray-500 text-sm mt-1">Start asking questions to see them here</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Trending Topics */}
-            <Card className="bg-gray-800/50 border-gray-700 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-xl text-white flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-emerald-400" />
-                  Trending Topics
-                </CardTitle>
-                <CardDescription className="text-gray-400">
-                  Popular questions this week
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {trendingTopics.map((topic, index) => {
-                    const Icon = topic.icon;
-                    return (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between p-4 bg-gray-700/30 hover:bg-gray-700/50 rounded-xl border border-gray-600 transition-all hover:scale-102 cursor-pointer group"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
-                            <Icon size={16} className="text-white" />
-                          </div>
-                          <div>
-                            <p className="text-white font-medium group-hover:text-emerald-300 transition-colors">{topic.topic}</p>
-                            <p className="text-xs text-gray-400">{topic.queries} queries</p>
-                          </div>
-                        </div>
-                        <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30">
-                          <TrendingUp className="w-3 h-3 mr-1" />
-                          Hot
-                        </Badge>
-                      </div>
-                    );
-                  })}
                 </div>
               </CardContent>
             </Card>
           </div>
 
+          {/* Quick Actions */}
+          <div>
+            <Card className="bg-card border border-border rounded-xl shadow-md shadow-black/20">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-base font-semibold text-foreground">
+                  <Zap className="h-4 w-4 text-primary" />
+                  Quick actions
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {quickActions.map((action) => {
+                  const Icon = action.icon;
+                  return (
+                    <Button
+                      key={action.label}
+                      type="button"
+                      variant="ghost"
+                      onClick={() => navigate(action.link)}
+                      className="flex w-full items-center justify-start gap-3 rounded-xl border border-border bg-surface-2 px-3 py-3 text-sm font-medium text-foreground hover:bg-surface"
+                    >
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-card text-foreground">
+                        <Icon className="h-4 w-4" />
+                      </div>
+                      <span>{action.label}</span>
+                      <ArrowRight className="ml-auto h-3 w-3 text-muted-foreground" />
+                    </Button>
+                  );
+                })}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Bottom Grid */}
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+          {/* Recent Queries */}
+          <Card className="bg-card border border-border rounded-xl shadow-md shadow-black/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base font-semibold text-foreground">
+                <Clock className="h-4 w-4 text-primary" />
+                Recent queries
+              </CardTitle>
+              <CardDescription className="text-sm text-muted-foreground">
+                Your latest CampusGPT conversations.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {dashboardData?.recent_queries && dashboardData.recent_queries.length > 0 ? (
+                <div className="space-y-3">
+                  {dashboardData.recent_queries.map((query) => (
+                    <Button
+                      key={query.id}
+                      type="button"
+                      variant="ghost"
+                      data-testid={`recent-query-${query.id}`}
+                      className="flex w-full items-start justify-start gap-3 rounded-xl border border-border bg-surface-2 px-4 py-3 text-left text-sm font-normal text-foreground hover:bg-surface"
+                    >
+                      <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-card">
+                        <MessageSquare className="h-4 w-4 text-primary" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate">{query.query}</p>
+                        <p className="mt-1 text-xs text-muted-foreground">{query.timestamp}</p>
+                      </div>
+                      <ArrowRight className="h-3 w-3 flex-shrink-0 text-muted-foreground" />
+                    </Button>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-8 text-center">
+                  <MessageSquare className="mx-auto mb-3 h-8 w-8 text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground">No recent queries yet.</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Start a chat to see your history here.
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Trending Topics */}
+          <Card className="bg-card border border-border rounded-xl shadow-md shadow-black/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base font-semibold text-foreground">
+                <TrendingUp className="h-4 w-4 text-primary" />
+                Trending topics
+              </CardTitle>
+              <CardDescription className="text-sm text-muted-foreground">
+                Popular questions other students are asking.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {trendingTopics.map((topic) => {
+                  const Icon = topic.icon;
+                  return (
+                    <div
+                      key={topic.topic}
+                      className="flex items-center justify-between rounded-xl border border-border bg-surface-2 px-4 py-3 text-sm text-foreground"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-card">
+                          <Icon className="h-4 w-4 text-foreground" />
+                        </div>
+                        <div>
+                          <p className="font-medium">{topic.topic}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {topic.queries} queries
+                          </p>
+                        </div>
+                      </div>
+                      {/* Minimal tag without extra accent colors */}
+                      <Badge className="rounded-full border border-border bg-surface-2 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                        Trending
+                      </Badge>
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </Layout>

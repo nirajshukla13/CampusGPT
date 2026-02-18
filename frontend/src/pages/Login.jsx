@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { GraduationCap, Eye, EyeOff } from 'lucide-react';
+import { Card, CardContent, CardHeader } from '../components/ui/card';
+import { Input } from '../components/ui/input';
+import { Button } from '../components/ui/button';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -52,158 +55,157 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center p-4">
+    <div className="flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-md">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4">
-            <GraduationCap className="text-white" size={32} />
-          </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">CampusGPT</h1>
-          <p className="text-gray-400 mt-2">{isRegister ? 'Create your account' : 'Sign in to your account'}</p>
-        </div>
+        <Card className="border border-[#1F2937] bg-[#111827] shadow-md shadow-black/20">
+          <CardHeader className="pb-4 pt-6 text-center">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#0F172A] text-[#F9FAFB]">
+              <GraduationCap size={28} />
+            </div>
+            <h1 className="text-2xl font-semibold text-[#F9FAFB]">CampusGPT</h1>
+            <p className="mt-1 text-sm text-[#9CA3AF]">
+              {isRegister ? 'Create your account' : 'Sign in to your account'}
+            </p>
+          </CardHeader>
+          <CardContent className="pb-6 pt-0">
+            <form onSubmit={handleSubmit} data-testid="login-form" className="space-y-4">
+              {isRegister && (
+                <div className="space-y-1">
+                  <label className="text-sm font-medium text-[#E5E7EB]">Full name</label>
+                  <Input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="Enter your full name"
+                    className="h-11 rounded-xl border-[#1F2937] bg-[#020617] text-sm text-[#F9FAFB] placeholder:text-[#6B7280] focus-visible:ring-2 focus-visible:ring-[#6366F1]"
+                    required
+                  />
+                </div>
+              )}
 
-        {/* Login/Register Card */}
-        <div className="bg-gray-800/50 rounded-lg border border-gray-700 backdrop-blur-sm p-8">
-          <form onSubmit={handleSubmit} data-testid="login-form">
-            {/* Name (only for registration) */}
-            {isRegister && (
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-700/50 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none placeholder-gray-400"
-                  placeholder="Enter your full name"
+              <div className="space-y-1">
+                <label className="text-sm font-medium text-[#E5E7EB]">Email address</label>
+                <Input
+                  type="email"
+                  data-testid="email-input"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  placeholder="Enter your email"
+                  className="h-11 rounded-xl border-[#1F2937] bg-[#020617] text-sm text-[#F9FAFB] placeholder:text-[#6B7280] focus-visible:ring-2 focus-visible:ring-[#6366F1]"
                   required
                 />
               </div>
-            )}
-            {/* Email */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Email Address
-              </label>
-              <input
-                type="email"
-                data-testid="email-input"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-4 py-2 bg-gray-700/50 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none placeholder-gray-400"
-                placeholder="Enter your email"
-                required
-              />
-            </div>
 
-            {/* Password */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Password
-              </label>
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  data-testid="password-input"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full px-4 py-2 pr-10 bg-gray-700/50 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none placeholder-gray-400"
-                  placeholder="Enter your password"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-300 transition-colors focus:outline-none"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
-              </div>
-            </div>
-
-            {/* Role Selection */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Select Role
-              </label>
-              <div className="grid grid-cols-3 gap-2">
-                {['student', 'faculty', 'admin'].map((role) => (
-                  <button
-                    key={role}
+              <div className="space-y-1">
+                <label className="text-sm font-medium text-[#E5E7EB]">Password</label>
+                <div className="relative">
+                  <Input
+                    type={showPassword ? 'text' : 'password'}
+                    data-testid="password-input"
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    placeholder="Enter your password"
+                    className="h-11 rounded-xl border-[#1F2937] bg-[#020617] pr-10 text-sm text-[#F9FAFB] placeholder:text-[#6B7280] focus-visible:ring-2 focus-visible:ring-[#6366F1]"
+                    required
+                  />
+                  <Button
                     type="button"
-                    data-testid={`role-${role}`}
-                    onClick={() => setFormData({ ...formData, role })}
-                    className={`px-4 py-2 rounded-lg font-medium capitalize transition-all ${
-                      formData.role === role
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-700/30 border border-gray-600 text-gray-300 hover:bg-gray-700/50'
-                    }`}
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-1 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:bg-transparent hover:text-[#F9FAFB]"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
-                    {role}
-                  </button>
-                ))}
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </Button>
+                </div>
               </div>
-            </div>
 
-            {/* Error Message */}
-            {error && (
-              <div data-testid="error-message" className="mb-4 p-3 bg-red-900/50 border border-red-500 rounded-lg text-red-300 text-sm">
-                {error}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-[#E5E7EB]">Select role</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {['student', 'faculty', 'admin'].map((role) => (
+                    <Button
+                      key={role}
+                      type="button"
+                      data-testid={`role-${role}`}
+                      onClick={() => setFormData({ ...formData, role })}
+                      variant={formData.role === role ? 'default' : 'outline'}
+                      className={`h-10 rounded-xl text-xs font-medium capitalize ${
+                        formData.role === role
+                          ? 'bg-[#6366F1] text-white hover:bg-[#4F46E5]'
+                          : 'border-[#1F2937] bg-[#020617] text-[#E5E7EB] hover:bg-[#111827]'
+                      }`}
+                    >
+                      {role}
+                    </Button>
+                  ))}
+                </div>
               </div>
-            )}
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              data-testid="login-submit-button"
-              disabled={loading}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? (isRegister ? 'Creating Account...' : 'Signing in...') : (isRegister ? 'Create Account' : 'Sign In')}
-            </button>
-          </form>
+              {error && (
+                <div
+                  data-testid="error-message"
+                  className="rounded-xl border border-[#EF4444] bg-[#450a0a] px-3 py-2 text-xs text-[#fecaca]"
+                >
+                  {error}
+                </div>
+              )}
 
-          {/* Toggle between Login and Register */}
-          <div className="mt-6 pt-6 border-t border-gray-700 text-center">
-            <p className="text-sm text-gray-400">
-              {isRegister ? 'Already have an account?' : "Don't have an account?"}{' '}
-              <button
+              <Button
+                type="submit"
+                data-testid="login-submit-button"
+                disabled={loading}
+                className="mt-2 h-10 w-full rounded-xl bg-[#6366F1] text-sm font-medium text-white hover:bg-[#4F46E5] disabled:opacity-50"
+              >
+                {loading
+                  ? isRegister
+                    ? 'Creating account...'
+                    : 'Signing in...'
+                  : isRegister
+                  ? 'Create account'
+                  : 'Sign in'}
+              </Button>
+            </form>
+
+            <div className="mt-6 border-t border-[#1F2937] pt-4 text-center text-xs text-[#9CA3AF]">
+              <span>
+                {isRegister ? 'Already have an account?' : "Don’t have an account?"}{' '}
+              </span>
+              <Button
                 type="button"
+                variant="link"
+                className="px-1 text-xs font-medium text-[#6366F1] hover:text-[#4F46E5]"
                 onClick={() => {
                   setIsRegister(!isRegister);
                   setError('');
                 }}
-                className="text-blue-400 hover:text-blue-300 font-medium"
               >
-                {isRegister ? 'Sign In' : 'Create Account'}
-              </button>
-            </p>
-          </div>
+                {isRegister ? 'Sign in' : 'Create account'}
+              </Button>
+            </div>
 
-          {/* Demo Credentials - Only show in login mode */}
-          {!isRegister && (
-            <div className="mt-6 pt-6 border-t border-gray-700">
-              <p className="text-sm text-gray-300 mb-3 font-medium">Demo Credentials:</p>
-              <div className="space-y-2 text-xs text-gray-400">
-                <div className="flex justify-between">
-                  <span>Student:</span>
-                  <span className="font-mono text-gray-300">student@campus.com / student123</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Faculty:</span>
-                  <span className="font-mono text-gray-300">faculty@campus.com / faculty123</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Admin:</span>
-                  <span className="font-mono text-gray-300">admin@campus.com / admin123</span>
+            {!isRegister && (
+              <div className="mt-4 border-t border-[#1F2937] pt-4 text-xs text-[#9CA3AF]">
+                <p className="mb-2 font-medium text-[#E5E7EB]">Demo credentials</p>
+                <div className="space-y-1 font-mono">
+                  <div className="flex justify-between">
+                    <span>Student</span>
+                    <span className="text-[#E5E7EB]">student@campus.com / student123</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Faculty</span>
+                    <span className="text-[#E5E7EB]">faculty@campus.com / faculty123</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Admin</span>
+                    <span className="text-[#E5E7EB]">admin@campus.com / admin123</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

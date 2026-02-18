@@ -110,7 +110,7 @@ const Profile = () => {
   if (loading) {
     return (
       <Layout role={role}>
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-8">
+        <div className="min-h-screen p-8">
           <div className="max-w-3xl mx-auto">
             <div className="animate-pulse space-y-4">
               <div className="h-8 bg-gray-700 rounded w-1/4"></div>
@@ -125,7 +125,7 @@ const Profile = () => {
   if (error) {
     return (
       <Layout role={role}>
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-8">
+        <div className="min-h-screen p-8">
           <div className="max-w-3xl mx-auto">
             <div className="bg-red-900/50 border border-red-500 rounded-lg p-4 text-red-300">
               {error}
@@ -138,7 +138,7 @@ const Profile = () => {
 
   return (
     <Layout role={role}>
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-8">
+      <div className="min-h-screen p-8">
         <div className="max-w-6xl mx-auto">
           <div className="mb-8">
             <h1 className="text-4xl font-bold text-white mb-2">My Profile</h1>
