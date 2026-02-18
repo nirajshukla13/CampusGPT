@@ -1,9 +1,11 @@
 import os
 from dotenv import load_dotenv
 from pathlib import Path
+from google import genai
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
+
 
 class Settings:
     # MongoDB
@@ -20,5 +22,15 @@ class Settings:
     
     # API
     API_PREFIX: str = "/api"
-    
+
+    # 🔥 Gemini Configuration
+    GEMINI_API_KEY: str = os.environ.get("GOOGLE_API_KEY", "")
+    GEMINI_MODEL: str = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+
+    def get_gemini_client(self):
+        if not self.GEMINI_API_KEY:
+            raise ValueError("GEMINI_API_KEY not found in environment variables.")
+        return genai.Client(api_key=self.GEMINI_API_KEY)
+
+
 settings = Settings()
