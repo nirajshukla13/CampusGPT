@@ -1,31 +1,44 @@
-import React, { useState, useEffect, useRef } from 'react';
-import Layout from '../../components/Layout';
-import { Send, MessageSquare, Bot, User as UserIcon, Loader2 } from 'lucide-react';
-import { Card, CardContent } from '../../components/ui/card';
-import { Input } from '../../components/ui/input';
-import { Button } from '../../components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
-import { Avatar, AvatarFallback } from '../../components/ui/avatar';
+import React, { useState, useEffect, useRef } from "react";
+import Layout from "../../components/Layout";
+import {
+  Send,
+  MessageSquare,
+  Bot,
+  User as UserIcon,
+  Loader2,
+} from "lucide-react";
+import { Card, CardContent } from "../../components/ui/card";
+import { Input } from "../../components/ui/input";
+import { Button } from "../../components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../components/ui/select";
+import { Avatar, AvatarFallback } from "../../components/ui/avatar";
+import MermaidDiagram from "@/components/MermaidDiagram";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '../../components/ui/accordion';
-import { Badge } from '../../components/ui/badge';
-import { queryAPI, studentAPI } from '../../services/api';
+} from "../../components/ui/accordion";
+import { Badge } from "../../components/ui/badge";
+import { queryAPI, studentAPI } from "../../services/api";
 
 export default function StudentChat() {
   const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState('');
-  const [model, setModel] = useState('campus-rag');
+  const [input, setInput] = useState("");
+  const [model, setModel] = useState("campus-rag");
   const [isLoading, setIsLoading] = useState(false);
   const [chatHistory, setChatHistory] = useState([]);
   const messagesEndRef = useRef(null);
 
   // Scroll to bottom when messages change
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -42,32 +55,32 @@ export default function StudentChat() {
       const response = await studentAPI.getHistory();
       setChatHistory(response.data.queries || []);
     } catch (error) {
-      console.error('Error loading chat history:', error);
+      console.error("Error loading chat history:", error);
     }
   };
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
 
-    const userMessage = { text: input, sender: 'user' };
+    const userMessage = { text: input, sender: "user" };
     setMessages((prev) => [...prev, userMessage]);
     const currentQuestion = input;
-    setInput('');
+    setInput("");
     setIsLoading(true);
 
     // Add placeholder bot message
     const botMessageIndex = messages.length + 1;
     setMessages((prev) => [
       ...prev,
-      { text: '', sender: 'bot', citations: [], isStreaming: true },
+      { text: "", sender: "bot", citations: [], isStreaming: true },
     ]);
 
     try {
-      if (model === 'campus-rag') {
+      if (model === "campus-rag") {
         // Use streaming for Campus RAG
         const reader = await queryAPI.askQuestion(currentQuestion, true);
         const decoder = new TextDecoder();
-        let accumulatedText = '';
+        let accumulatedText = "";
         let sources = [];
 
         while (true) {
@@ -75,35 +88,45 @@ export default function StudentChat() {
           if (done) break;
 
           const chunk = decoder.decode(value, { stream: true });
-          const lines = chunk.split('\n');
+          const lines = chunk.split("\n");
 
           for (const line of lines) {
-            if (line.startsWith('data: ')) {
+            if (line.startsWith("data: ")) {
               try {
                 const data = JSON.parse(line.slice(6));
 
-                if (data.type === 'sources') {
+                if (data.type === "sources") {
                   sources = data.data;
-                } else if (data.type === 'chunk') {
+                } else if (data.type === "chunk") {
                   accumulatedText += data.data;
                   // Update the bot message with accumulated text
                   setMessages((prev) => {
                     const newMessages = [...prev];
                     newMessages[botMessageIndex] = {
                       text: accumulatedText,
-                      sender: 'bot',
+                      sender: "bot",
                       citations: sources,
                       isStreaming: true,
                     };
                     return newMessages;
                   });
-                } else if (data.type === 'done') {
+                } else if (data.type === "diagram") {
+                  // 🔥 ADD THIS BLOCK
+                  setMessages((prev) => {
+                    const newMessages = [...prev];
+                    newMessages[botMessageIndex] = {
+                      ...newMessages[botMessageIndex],
+                      diagram: data.data,
+                    };
+                    return newMessages;
+                  });
+                } else if (data.type === "done") {
                   // Mark streaming as complete
                   setMessages((prev) => {
                     const newMessages = [...prev];
                     newMessages[botMessageIndex] = {
                       text: accumulatedText,
-                      sender: 'bot',
+                      sender: "bot",
                       citations: sources,
                       isStreaming: false,
                     };
@@ -111,13 +134,13 @@ export default function StudentChat() {
                   });
                   // Reload history to include new query
                   loadChatHistory();
-                } else if (data.type === 'error') {
-                  console.error('Streaming error:', data.message);
+                } else if (data.type === "error") {
+                  console.error("Streaming error:", data.message);
                   setMessages((prev) => {
                     const newMessages = [...prev];
                     newMessages[botMessageIndex] = {
                       text: `Error: ${data.message}`,
-                      sender: 'bot',
+                      sender: "bot",
                       citations: [],
                       isStreaming: false,
                     };
@@ -125,7 +148,7 @@ export default function StudentChat() {
                   });
                 }
               } catch (e) {
-                console.error('Error parsing SSE data:', e);
+                console.error("Error parsing SSE data:", e);
               }
             }
           }
@@ -133,12 +156,14 @@ export default function StudentChat() {
       } else {
         // GPT-4.0 - use non-streaming (placeholder for now)
         const response = await queryAPI.askQuestion(currentQuestion, false);
+
         setMessages((prev) => {
           const newMessages = [...prev];
           newMessages[botMessageIndex] = {
             text: response.data.answer,
-            sender: 'bot',
+            sender: "bot",
             citations: response.data.sources || [],
+            diagram: response.data.diagram || null,
             isStreaming: false,
           };
           return newMessages;
@@ -146,12 +171,12 @@ export default function StudentChat() {
         loadChatHistory();
       }
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error("Error sending message:", error);
       setMessages((prev) => {
         const newMessages = [...prev];
         newMessages[botMessageIndex] = {
-          text: 'Sorry, there was an error processing your request. Please try again.',
-          sender: 'bot',
+          text: "Sorry, there was an error processing your request. Please try again.",
+          sender: "bot",
           citations: [],
           isStreaming: false,
         };
@@ -165,8 +190,8 @@ export default function StudentChat() {
   const loadHistoryChat = (query) => {
     // Load a previous chat into the current conversation
     setMessages([
-      { text: query.question, sender: 'user' },
-      { text: query.answer, sender: 'bot', citations: query.sources || [] },
+      { text: query.question, sender: "user" },
+      { text: query.answer, sender: "bot", citations: query.sources || [] },
     ]);
   };
 
@@ -181,7 +206,9 @@ export default function StudentChat() {
                 <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                   Chats
                 </p>
-                <p className="text-sm font-semibold text-foreground">Recent conversations</p>
+                <p className="text-sm font-semibold text-foreground">
+                  Recent conversations
+                </p>
               </div>
               <Button
                 type="button"
@@ -216,7 +243,9 @@ export default function StudentChat() {
           {/* Top bar */}
           <div className="flex items-center justify-between gap-4 border-b border-border px-4 py-3">
             <div className="space-y-0.5">
-              <p className="text-sm font-semibold text-foreground">Chat with CampusGPT</p>
+              <p className="text-sm font-semibold text-foreground">
+                Chat with CampusGPT
+              </p>
               <p className="text-xs text-muted-foreground">
                 Ask about courses, events, campus facilities, and more.
               </p>
@@ -253,8 +282,8 @@ export default function StudentChat() {
                   Start a conversation with CampusGPT
                 </p>
                 <p className="max-w-sm text-xs text-muted-foreground">
-                  Ask about your timetable, exam schedule, course requirements, or anything else about
-                  campus.
+                  Ask about your timetable, exam schedule, course requirements,
+                  or anything else about campus.
                 </p>
               </div>
             ) : (
@@ -263,11 +292,11 @@ export default function StudentChat() {
                   <div
                     key={idx}
                     data-testid={`message-${idx}`}
-                    className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                    className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
                   >
                     <div className="flex max-w-[75%] flex-col gap-2">
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        {msg.sender === 'bot' ? (
+                        {msg.sender === "bot" ? (
                           <>
                             <Bot className="h-3 w-3" />
                             <span>CampusGPT</span>
@@ -281,47 +310,74 @@ export default function StudentChat() {
                       </div>
                       <Card
                         className={
-                          msg.sender === 'user'
-                            ? 'border-none bg-surface-2 text-foreground rounded-2xl'
-                            : 'border border-border bg-card text-foreground rounded-2xl'
+                          msg.sender === "user"
+                            ? "border-none bg-surface-2 text-foreground rounded-2xl"
+                            : "border border-border bg-card text-foreground rounded-2xl"
                         }
                       >
                         <CardContent className="p-3 text-sm leading-relaxed">
-                          {msg.text || (msg.isStreaming && <Loader2 className="h-4 w-4 animate-spin" />)}
+                          {msg.text ||
+                            (msg.isStreaming && (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ))}
                         </CardContent>
+                        {msg.diagram && (
+                          <div className="mt-3 space-y-2">
+                            <div className="text-xs text-indigo-400 font-semibold">
+                              Visual Explanation
+                            </div>
+
+                            <p className="text-xs text-gray-300">
+                              {msg.diagram.explanation}
+                            </p>
+
+                            <MermaidDiagram chart={msg.diagram.diagram} />
+                          </div>
+                        )}
                       </Card>
-                      {msg.sender === 'bot' && msg.citations && msg.citations.length > 0 && (
-                        <Accordion type="single" collapsible className="w-full">
-                          <AccordionItem value={`sources-${idx}`} className="border-none">
-                            <AccordionTrigger className="text-xs text-muted-foreground hover:text-foreground">
-                              Sources
-                            </AccordionTrigger>
-                            <AccordionContent className="space-y-2">
-                              {msg.citations.map((source) => (
-                                <div
-                                  key={source.id}
-                                  className="flex items-center justify-between rounded-lg border border-border bg-surface-2 px-3 py-2 text-xs text-foreground"
-                                >
-                                  <div className="flex flex-col gap-1">
-                                    <span className="font-medium">{source.name}</span>
-                                    <div className="flex flex-wrap items-center gap-1.5">
-                                      <Badge className="rounded-full border-0 bg-surface-2 px-2 py-0.5 text-[10px] text-foreground">
-                                        {source.label}
-                                      </Badge>
-                                      <Badge className="rounded-full border-0 bg-surface-2 px-2 py-0.5 text-[10px] text-foreground">
-                                        Page {source.page}
-                                      </Badge>
-                                      <Badge className="rounded-full border-0 bg-surface-2 px-2 py-0.5 text-[10px] text-foreground">
-                                        {source.timestamp}
-                                      </Badge>
+                      {msg.sender === "bot" &&
+                        msg.citations &&
+                        msg.citations.length > 0 && (
+                          <Accordion
+                            type="single"
+                            collapsible
+                            className="w-full"
+                          >
+                            <AccordionItem
+                              value={`sources-${idx}`}
+                              className="border-none"
+                            >
+                              <AccordionTrigger className="text-xs text-muted-foreground hover:text-foreground">
+                                Sources
+                              </AccordionTrigger>
+                              <AccordionContent className="space-y-2">
+                                {msg.citations.map((source) => (
+                                  <div
+                                    key={source.id}
+                                    className="flex items-center justify-between rounded-lg border border-border bg-surface-2 px-3 py-2 text-xs text-foreground"
+                                  >
+                                    <div className="flex flex-col gap-1">
+                                      <span className="font-medium">
+                                        {source.name}
+                                      </span>
+                                      <div className="flex flex-wrap items-center gap-1.5">
+                                        <Badge className="rounded-full border-0 bg-surface-2 px-2 py-0.5 text-[10px] text-foreground">
+                                          {source.label}
+                                        </Badge>
+                                        <Badge className="rounded-full border-0 bg-surface-2 px-2 py-0.5 text-[10px] text-foreground">
+                                          Page {source.page}
+                                        </Badge>
+                                        <Badge className="rounded-full border-0 bg-surface-2 px-2 py-0.5 text-[10px] text-foreground">
+                                          {source.timestamp}
+                                        </Badge>
+                                      </div>
                                     </div>
                                   </div>
-                                </div>
-                              ))}
-                            </AccordionContent>
-                          </AccordionItem>
-                        </Accordion>
-                      )}
+                                ))}
+                              </AccordionContent>
+                            </AccordionItem>
+                          </Accordion>
+                        )}
                     </div>
                   </div>
                 ))}
