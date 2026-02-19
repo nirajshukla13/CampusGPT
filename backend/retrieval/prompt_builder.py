@@ -1,29 +1,54 @@
-import json
+def build_structured_prompt(chunks, query: str):
+    prompt = f"""
+You are a retrieval-augmented question answering system.
 
-def build_multimodal_prompt(chunks, query: str):
-    prompt = f"""Based on the following documents, answer the question:
+STRICT RULES:
+- Use ONLY the provided document excerpts.
+- Citations represent SOURCE CHUNKS, not individual sentences.
+- Use AT MOST ONE citation per chunk.
+- Do NOT duplicate citations from the same document_id + chunk_index.
+- Every citation must correspond to a chunk explicitly listed below.
+- If numerical values (MAE, RMSE, accuracy, %, years) appear, include them.
+- Output MUST strictly follow the given schema.
+- Output ONLY valid JSON. No explanations.
 
 QUESTION:
 {query}
 
-DOCUMENTS:
+DOCUMENT EXCERPTS:
 """
 
-    for i, chunk in enumerate(chunks):
-        prompt += f"\n--- Document {i+1} ---\n"
+    for i, chunk in enumerate(chunks, start=1):
+        prompt += f"""
+--- CHUNK {i} ---
+document_name: {chunk.metadata.get("document_name")}
+document_id: {chunk.metadata.get("document_id")}
+chunk_index: {chunk.metadata.get("chunk_index")}
+document_url: {chunk.metadata.get("document_url")}
 
-        if "original_content" in chunk.metadata:
-            data = json.loads(chunk.metadata["original_content"])
-
-            if data.get("raw_text"):
-                prompt += f"TEXT:\n{data['raw_text']}\n\n"
-
-            for j, table in enumerate(data.get("tables_html", [])):
-                prompt += f"TABLE {j+1}:\n{table}\n\n"
+content:
+{chunk.page_content}
+"""
 
     prompt += """
-If the answer is not present, say so clearly.
+OUTPUT FORMAT (JSON ONLY):
+{
+  "answer": "string",
+  "citations": [
+    {
+      "document_name": "string",
+      "document_id": "string",
+      "chunk_index": number,
+      "document_url": "string",
+      "excerpt": "string (representative excerpt from the chunk)"
+    }
+  ],
+  "confidence": "high | medium | low"
+}
 
-ANSWER:
+IMPORTANT:
+- Citations MUST be unique by (document_id, chunk_index).
+- Do NOT repeat citations from the same chunk.
 """
+
     return prompt

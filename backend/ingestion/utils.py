@@ -1,35 +1,29 @@
 import json
 from typing import List
 
-from pypdf import PdfReader
 from dotenv import load_dotenv
 
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
+from langchain_google_genai import (
+    ChatGoogleGenerativeAI,
+    GoogleGenerativeAIEmbeddings
+)
 from langchain_chroma import Chroma
 from langchain_core.messages import HumanMessage
+
+from ingestion.load_documents import load_document
 
 load_dotenv()
 
 def partition_document(file_path: str) -> str:
-    print(f"📄 Reading PDF: {file_path}")
+    """
+    Loads document content as plain text.
+    """
+    return load_document(file_path)
 
-    reader = PdfReader(file_path)
-    pages = []
-
-    for page in reader.pages:
-        text = page.extract_text()
-        if text:
-            pages.append(text)
-
-    full_text = "\n\n".join(pages)
-    print(f"✅ Extracted text from {len(pages)} pages")
-    return full_text
 
 def create_chunks_by_title(text: str) -> List[str]:
-    print("✂️ Creating chunks")
-
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=500,
         chunk_overlap=100,
@@ -40,27 +34,27 @@ def create_chunks_by_title(text: str) -> List[str]:
     print(f"✅ Created {len(chunks)} chunks")
     return chunks
 
-def separate_content_types(chunk_text: str):
+def separate_content_types(chunk_text: str) -> dict:
     """
-    Very light heuristic:
-    - If text has many pipes or aligned columns → table-like
+    Light heuristic to detect table-like content.
     """
-    tables = []
     lines = chunk_text.splitlines()
-
     table_lines = [l for l in lines if "|" in l or "\t" in l]
 
+    tables = []
     if len(table_lines) >= 3:
-        tables.append(chr(10).join(table_lines))
+        tables.append("\n".join(table_lines))
 
     return {
         "text": chunk_text,
-        "tables": tables,
-        "images": [],
-        "types": ["text"] + (["table"] if tables else [])
+        "tables": tables
     }
 
 def create_ai_enhanced_summary(text: str, tables: List[str]) -> str:
+    """
+    Produces an AI-generated searchable summary.
+    Used to improve retrieval recall.
+    """
     try:
         llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash")
 
@@ -73,8 +67,8 @@ TEXT:
 
         if tables:
             prompt += "\nTABLES:\n"
-            for i, table in enumerate(tables):
-                prompt += f"Table {i+1}:\n{table}\n\n"
+            for i, table in enumerate(tables, start=1):
+                prompt += f"Table {i}:\n{table}\n\n"
 
         prompt += """
 TASK:
@@ -86,60 +80,73 @@ TASK:
 SEARCHABLE DESCRIPTION:
 """
 
-        message = HumanMessage(content=prompt)
-        response = llm.invoke([message])
+        response = llm.invoke([HumanMessage(content=prompt)])
         return response.content
 
     except Exception as e:
         print(f"❌ AI summary failed: {e}")
         return text[:300] + "..."
 
-def summarise_chunks(chunks: List[str]) -> List[Document]:
-    print("🧠 Processing chunks with AI summaries")
+def summarise_chunks(
+    chunks: List[str],
+    document_id: str,
+    document_name: str,
+    document_url: str,
+    uploader: dict
+) -> List[Document]:
 
-    documents = []
+    documents: List[Document] = []
 
-    for i, chunk in enumerate(chunks, 1):
-        print(f"   Chunk {i}/{len(chunks)}")
-
+    for idx, chunk in enumerate(chunks):
         content = separate_content_types(chunk)
 
         if content["tables"]:
-            enhanced = create_ai_enhanced_summary(
+            page_content = create_ai_enhanced_summary(
                 content["text"],
                 content["tables"]
             )
         else:
-            enhanced = content["text"]
+            page_content = content["text"]
 
-        doc = Document(
-            page_content=enhanced,
-            metadata={
-                "original_content": json.dumps({
-                    "raw_text": content["text"],
-                    "tables": content["tables"]
-                })
-            }
+        documents.append(
+            Document(
+                page_content=page_content,
+                metadata={
+                    "document_id": document_id,
+                    "document_name": document_name,
+                    "document_url": document_url,
+                    "uploader": uploader["email"],
+                    "chunk_index": idx,
+
+                    "raw_text": content["text"]
+                }
+            )
         )
 
-        documents.append(doc)
-
-    print(f"✅ Processed {len(documents)} chunks")
     return documents
 
-def create_vector_store(documents, persist_directory="vectorstore"):
-    print("🔮 Creating vector store")
+
+def create_vector_store(
+    documents: List[Document],
+    persist_directory: str
+):
+    """
+    Adds documents to a persistent Chroma vector store.
+    Safe for repeated ingestion.
+    """
+    print("🔮 Creating / updating vector store")
 
     embeddings = GoogleGenerativeAIEmbeddings(
         model="gemini-embedding-001"
     )
 
-    vectorstore = Chroma.from_documents(
-        documents=documents,
-        embedding=embeddings,
+    vectorstore = Chroma(
         persist_directory=persist_directory,
+        embedding_function=embeddings,
         collection_metadata={"hnsw:space": "cosine"}
     )
 
-    print(f"✅ Vector store saved at {persist_directory}")
+    vectorstore.add_documents(documents)
+
+    print(f"✅ Vector store updated at {persist_directory}")
     return vectorstore

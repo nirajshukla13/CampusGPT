@@ -5,6 +5,8 @@ __pycache__/
 .git/
 .gitignore
 vectorstore/
+uploads/
+dbV2
 docs/
 *.pdf
 *.pptx

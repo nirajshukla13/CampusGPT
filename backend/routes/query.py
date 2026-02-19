@@ -8,7 +8,6 @@ router = APIRouter(prefix="/query", tags=["Query"])
 async def ask_question(question: str):
     # 1. Retrieve relevant chunks
     chunks = retrieve_chunks(question, k=3)
-
     # 2. Generate final answer
     answer = generate_final_answer(
         chunks=chunks,
