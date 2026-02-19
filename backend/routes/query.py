@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from retrieval.retriever import retrieve_chunks
+from retrieval.retrieve_chunks import retrieve_chunks
 from retrieval.generate_answer import generate_final_answer
 
 router = APIRouter(prefix="/query", tags=["Query"])

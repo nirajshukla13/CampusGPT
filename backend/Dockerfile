@@ -27,15 +27,15 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # ----------------------------
-# Install Python dependencies
+# Install Python dependencies (cached layer)
 # ----------------------------
-COPY requirements.txt .
+COPY requirements.prod.txt .
 
 RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+    pip install --no-cache-dir -r requirements.prod.txt
 
 # ----------------------------
-# Copy application code
+# Copy application code (changes here won't bust deps cache)
 # ----------------------------
 COPY . .
 

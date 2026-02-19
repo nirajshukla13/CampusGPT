@@ -3,7 +3,7 @@
 # IDE and editors
 .idea/
 .vscode/
-
+test
 test.py
 vectorstore
 # Dependencies
