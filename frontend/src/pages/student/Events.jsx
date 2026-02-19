@@ -1,85 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '../../components/Layout';
 import { Calendar, Clock, MapPin, Users, Star, Filter, Search, Bell, Bookmark, TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
 import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
+import axios from 'axios';
 
 export default function StudentEvents() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const categories = ['All', 'Academic', 'Sports', 'Cultural', 'Workshop', 'Social'];
+  const categories = ['All', 'Technical', 'Cultural', 'Sports', 'Workshop', 'Academic', 'NSS', 'NCC', 'Other'];
 
-  const events = [
-    {
-      id: 1,
-      title: 'Annual Tech Symposium 2026',
-      date: 'Feb 25, 2026',
-      time: '10:00 AM - 4:00 PM',
-      location: 'Main Auditorium',
-      category: 'Academic',
-      attendees: 250,
-      featured: true,
-      description: 'Join us for the biggest tech event of the year featuring speakers from top companies.'
-    },
-    {
-      id: 2,
-      title: 'Spring Basketball Championship',
-      date: 'Feb 28, 2026',
-      time: '5:00 PM - 8:00 PM',
-      location: 'Sports Complex',
-      category: 'Sports',
-      attendees: 500,
-      featured: true,
-      description: 'Cheer for your team in the inter-college basketball finals!'
-    },
-    {
-      id: 3,
-      title: 'Cultural Night: Global Fusion',
-      date: 'Mar 5, 2026',
-      time: '6:00 PM - 10:00 PM',
-      location: 'Open Air Theater',
-      category: 'Cultural',
-      attendees: 400,
-      featured: false,
-      description: 'Experience diverse cultures through music, dance, and food.'
-    },
-    {
-      id: 4,
-      title: 'AI & Machine Learning Workshop',
-      date: 'Mar 10, 2026',
-      time: '2:00 PM - 5:00 PM',
-      location: 'Computer Lab 3',
-      category: 'Workshop',
-      attendees: 75,
-      featured: false,
-      description: 'Hands-on workshop on building ML models with Python and TensorFlow.'
-    },
-    {
-      id: 5,
-      title: 'Freshers Welcome Party',
-      date: 'Mar 12, 2026',
-      time: '7:00 PM - 11:00 PM',
-      location: 'Campus Grounds',
-      category: 'Social',
-      attendees: 600,
-      featured: true,
-      description: 'Welcome all new students with music, games, and entertainment!'
-    },
-    {
-      id: 6,
-      title: 'Career Fair 2026',
-      date: 'Mar 15, 2026',
-      time: '9:00 AM - 5:00 PM',
-      location: 'Exhibition Hall',
-      category: 'Academic',
-      attendees: 800,
-      featured: false,
-      description: 'Meet with recruiters from 50+ companies and explore career opportunities.'
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const fetchEvents = async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/api/events/upcoming', {
+        params: { limit: 50 }
+      });
+      setEvents(response.data.events || []);
+    } catch (error) {
+      console.error('Error fetching events:', error);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
   const filteredEvents = events.filter(event => {
     const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -87,6 +38,21 @@ export default function StudentEvents() {
     const matchesCategory = selectedCategory === 'all' || event.category.toLowerCase() === selectedCategory.toLowerCase();
     return matchesSearch && matchesCategory;
   });
+
+  const formatDate = (dateStr) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  };
+
+  if (loading) {
+    return (
+      <Layout role="student">
+        <div className="flex h-96 items-center justify-center">
+          <p className="text-muted-foreground">Loading events...</p>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout role="student">
@@ -170,7 +136,7 @@ export default function StudentEvents() {
                       <Badge className="border border-border bg-surface-2 px-3 py-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
                         {event.category}
                       </Badge>
-                      {event.featured && (
+                      {event.is_featured && (
                         <Badge className="border border-border bg-surface-2 px-3 py-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
                           <Star className="mr-1 h-3 w-3 text-primary" />
                           Featured
@@ -200,26 +166,24 @@ export default function StudentEvents() {
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-2">
                       <Calendar size={14} className="text-primary" />
                     </div>
-                    <span>{event.date}</span>
+                    <span>{formatDate(event.date)} ({event.day})</span>
                   </div>
-                  <div className="flex items-center gap-3 text-foreground">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-2">
-                      <Clock size={14} className="text-foreground" />
+                  {event.location && (
+                    <div className="flex items-center gap-3 text-foreground">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-2">
+                        <MapPin size={14} className="text-foreground" />
+                      </div>
+                      <span>{event.location}</span>
                     </div>
-                    <span>{event.time}</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-foreground">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-2">
-                      <MapPin size={14} className="text-foreground" />
+                  )}
+                  {event.organizer && (
+                    <div className="flex items-center gap-3 text-foreground">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-2">
+                        <Users size={14} className="text-primary" />
+                      </div>
+                      <span>{event.organizer}</span>
                     </div>
-                    <span>{event.location}</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-foreground">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-2">
-                      <Users size={14} className="text-primary" />
-                    </div>
-                    <span>{event.attendees} attendees</span>
-                  </div>
+                  )}
                 </div>
                 <div className="flex gap-3">
                   <Button

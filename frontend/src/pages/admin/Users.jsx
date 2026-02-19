@@ -31,19 +31,19 @@ export default function AdminUsers() {
 
         <div className="overflow-hidden rounded-xl border border-[#1F2937] bg-[#111827] shadow-md shadow-black/20">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-xs sm:text-sm">
               <thead className="border-b border-[#1F2937] bg-[#020617]">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide text-[#9CA3AF]">
+                  <th className="px-3 py-2.5 text-left text-[10px] font-medium uppercase tracking-wide text-[#9CA3AF] sm:px-6 sm:py-3 sm:text-xs">
                     User
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide text-[#9CA3AF]">
+                  <th className="hidden px-3 py-2.5 text-left text-[10px] font-medium uppercase tracking-wide text-[#9CA3AF] sm:table-cell sm:px-6 sm:py-3 sm:text-xs">
                     Email
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide text-[#9CA3AF]">
+                  <th className="px-3 py-2.5 text-left text-[10px] font-medium uppercase tracking-wide text-[#9CA3AF] sm:px-6 sm:py-3 sm:text-xs">
                     Role
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide text-[#9CA3AF]">
+                  <th className="hidden px-3 py-2.5 text-left text-[10px] font-medium uppercase tracking-wide text-[#9CA3AF] md:table-cell sm:px-6 sm:py-3 sm:text-xs">
                     Joined
                   </th>
                 </tr>
@@ -55,23 +55,26 @@ export default function AdminUsers() {
                     data-testid={`user-row-${user.id}`}
                     className="hover:bg-[#020617]"
                   >
-                    <td className="whitespace-nowrap px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1F2937] text-[#F9FAFB]">
-                          <User size={18} />
+                    <td className="whitespace-nowrap px-3 py-3 sm:px-6 sm:py-4">
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[#1F2937] text-[#F9FAFB] sm:h-9 sm:w-9">
+                          <User size={16} className="sm:w-[18px] sm:h-[18px]" />
                         </div>
-                        <span className="font-medium text-[#F9FAFB]">{user.name}</span>
+                        <div className="min-w-0">
+                          <span className="block truncate text-xs font-medium text-[#F9FAFB] sm:text-sm">{user.name}</span>
+                          <span className="block truncate text-[10px] text-[#9CA3AF] sm:hidden">{user.email}</span>
+                        </div>
                       </div>
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4">
-                      <div className="flex items-center gap-2 text-[#E5E7EB]">
-                        <Mail size={14} className="text-[#9CA3AF]" />
+                    <td className="hidden whitespace-nowrap px-3 py-3 sm:table-cell sm:px-6 sm:py-4">
+                      <div className="flex items-center gap-2 text-xs text-[#E5E7EB] sm:text-sm">
+                        <Mail size={12} className="text-[#9CA3AF] sm:w-[14px] sm:h-[14px]" />
                         {user.email}
                       </div>
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4">
+                    <td className="whitespace-nowrap px-3 py-3 sm:px-6 sm:py-4">
                       <span
-                        className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${
+                        className={`rounded-full px-2 py-0.5 text-[10px] font-medium capitalize sm:px-3 sm:py-1 sm:text-xs ${
                           user.role === 'admin'
                             ? 'border border-[#EF4444]/40 bg-[#7f1d1d] text-[#fecaca]'
                             : user.role === 'faculty'
@@ -82,7 +85,7 @@ export default function AdminUsers() {
                         {user.role}
                       </span>
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-xs text-[#9CA3AF]">
+                    <td className="hidden whitespace-nowrap px-3 py-3 text-[10px] text-[#9CA3AF] md:table-cell sm:px-6 sm:py-4 sm:text-xs">
                       {new Date(user.created_at).toLocaleDateString()}
                     </td>
                   </tr>

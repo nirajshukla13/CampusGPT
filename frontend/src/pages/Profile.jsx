@@ -107,11 +107,11 @@ const Profile = () => {
   if (loading) {
     return (
       <Layout role={role}>
-        <div className="min-h-screen p-8">
+        <div className="min-h-screen p-4 sm:p-6 md:p-8">
           <div className="max-w-3xl mx-auto">
             <div className="animate-pulse space-y-4">
-              <div className="h-8 bg-gray-700 rounded w-1/4"></div>
-              <div className="h-64 bg-gray-700 rounded"></div>
+              <div className="h-6 sm:h-8 bg-gray-700 rounded w-1/2 sm:w-1/4"></div>
+              <div className="h-48 sm:h-64 bg-gray-700 rounded"></div>
             </div>
           </div>
         </div>
@@ -122,9 +122,9 @@ const Profile = () => {
   if (error) {
     return (
       <Layout role={role}>
-        <div className="min-h-screen p-8">
+        <div className="min-h-screen p-4 sm:p-6 md:p-8">
           <div className="max-w-3xl mx-auto">
-            <div className="bg-red-900/50 border border-red-500 rounded-lg p-4 text-red-300">
+            <div className="bg-red-900/50 border border-red-500 rounded-lg p-3 sm:p-4 text-sm sm:text-base text-red-300">
               {error}
             </div>
           </div>
@@ -135,60 +135,60 @@ const Profile = () => {
 
   return (
     <Layout role={role}>
-      <div className="min-h-screen p-8">
+      <div className="min-h-screen p-4 sm:p-6 md:p-8">
         <div className="max-w-6xl mx-auto">
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold text-white mb-2">My Profile</h1>
-            <p className="text-gray-400 text-lg">Manage your account information and preferences</p>
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-1.5 sm:mb-2">My Profile</h1>
+            <p className="text-gray-400 text-sm sm:text-base md:text-lg">Manage your account information and preferences</p>
           </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Left Column - Profile Card */}
-          <div className="lg:col-span-1 space-y-6">
+          <div className="lg:col-span-1 space-y-4 sm:space-y-6">
             {/* Main Profile Card */}
             <div className="bg-gray-800/50 rounded-xl border border-gray-700 overflow-hidden backdrop-blur-sm">
-              <div className={`${getRoleColor(user?.role)} px-6 py-8 relative`}>
+              <div className={`${getRoleColor(user?.role)} px-4 py-6 sm:px-6 sm:py-8 relative`}>
                 <div className="flex flex-col items-center">
                   <div className="relative group">
-                    <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mb-4">
-                      <User size={48} className={`${user?.role === 'student' ? 'text-blue-600' : user?.role === 'faculty' ? 'text-purple-600' : 'text-orange-600'}`} />
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center mb-3 sm:mb-4">
+                      <User size={40} className={`sm:w-12 sm:h-12 ${user?.role === 'student' ? 'text-blue-600' : user?.role === 'faculty' ? 'text-purple-600' : 'text-orange-600'}`} />
                     </div>
-                    <button className="absolute bottom-4 right-0 bg-blue-600 p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Camera size={16} className="text-white" />
+                    <button className="absolute bottom-3 sm:bottom-4 right-0 bg-blue-600 p-1.5 sm:p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Camera size={14} className="text-white sm:w-4 sm:h-4" />
                     </button>
                   </div>
                   
                   {isEditing ? (
-                    <div className="w-full space-y-3">
+                    <div className="w-full space-y-2 sm:space-y-3">
                       <input
                         type="text"
                         value={editedName}
                         onChange={(e) => setEditedName(e.target.value)}
-                        className="w-full px-3 py-2 bg-white/20 border border-white/30 rounded-lg text-white text-center text-xl font-bold placeholder-white/50"
+                        className="w-full px-2.5 py-1.5 sm:px-3 sm:py-2 bg-white/20 border border-white/30 rounded-lg text-white text-center text-lg sm:text-xl font-bold placeholder-white/50"
                       />
                       <div className="flex gap-2 justify-center">
                         <button
                           onClick={handleSaveProfile}
-                          className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-white text-sm font-medium flex items-center gap-2 transition-colors"
+                          className="px-3 py-1.5 sm:px-4 sm:py-2 bg-green-600 hover:bg-green-700 rounded-lg text-white text-xs sm:text-sm font-medium flex items-center gap-1.5 sm:gap-2 transition-colors"
                         >
-                          <Save size={16} /> Save
+                          <Save size={14} className="sm:w-4 sm:h-4" /> Save
                         </button>
                         <button
                           onClick={handleCancelEdit}
-                          className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white text-sm font-medium flex items-center gap-2 transition-colors"
+                          className="px-3 py-1.5 sm:px-4 sm:py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white text-xs sm:text-sm font-medium flex items-center gap-1.5 sm:gap-2 transition-colors"
                         >
-                          <X size={16} /> Cancel
+                          <X size={14} className="sm:w-4 sm:h-4" /> Cancel
                         </button>
                       </div>
                     </div>
                   ) : (
-                    <div className="flex items-center gap-2">
-                      <h2 className="text-2xl font-bold text-white text-center">{user?.name}</h2>
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                      <h2 className="text-xl sm:text-2xl font-bold text-white text-center">{user?.name}</h2>
                       <button
                         onClick={() => setIsEditing(true)}
-                        className="p-1.5 hover:bg-white/20 rounded-lg transition-colors"
+                        className="p-1 sm:p-1.5 hover:bg-white/20 rounded-lg transition-colors"
                       >
-                        <Edit2 size={16} className="text-white" />
+                        <Edit2 size={14} className="text-white sm:w-4 sm:h-4" />
                       </button>
                     </div>
                   )}
@@ -199,58 +199,58 @@ const Profile = () => {
                 </div>
               </div>
 
-              <div className="p-6 space-y-4">
+              <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
                 {/* Email */}
-                <div className="flex items-center space-x-3 p-3 bg-gray-700/30 border border-gray-600 rounded-lg">
-                  <Mail size={20} className="text-gray-400" />
+                <div className="flex items-center space-x-2.5 sm:space-x-3 p-2.5 sm:p-3 bg-gray-700/30 border border-gray-600 rounded-lg">
+                  <Mail size={18} className="text-gray-400 sm:w-5 sm:h-5 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs text-gray-400 font-medium">Email Address</p>
-                    <p className="text-sm text-white truncate">{user?.email}</p>
+                    <p className="text-[10px] sm:text-xs text-gray-400 font-medium">Email Address</p>
+                    <p className="text-xs sm:text-sm text-white truncate">{user?.email}</p>
                   </div>
                 </div>
 
                 {/* Member Since */}
-                <div className="flex items-center space-x-3 p-3 bg-gray-700/30 border border-gray-600 rounded-lg">
-                  <Calendar size={20} className="text-gray-400" />
+                <div className="flex items-center space-x-2.5 sm:space-x-3 p-2.5 sm:p-3 bg-gray-700/30 border border-gray-600 rounded-lg">
+                  <Calendar size={18} className="text-gray-400 sm:w-5 sm:h-5 flex-shrink-0" />
                   <div className="flex-1">
-                    <p className="text-xs text-gray-400 font-medium">Member Since</p>
-                    <p className="text-sm text-white">{formatDate(user?.created_at)}</p>
+                    <p className="text-[10px] sm:text-xs text-gray-400 font-medium">Member Since</p>
+                    <p className="text-xs sm:text-sm text-white">{formatDate(user?.created_at)}</p>
                   </div>
                 </div>
 
                 {/* Days Active */}
-                <div className="flex items-center space-x-3 p-3 bg-gray-700/30 border border-gray-600 rounded-lg">
-                  <Clock size={20} className="text-gray-400" />
+                <div className="flex items-center space-x-2.5 sm:space-x-3 p-2.5 sm:p-3 bg-gray-700/30 border border-gray-600 rounded-lg">
+                  <Clock size={18} className="text-gray-400 sm:w-5 sm:h-5 flex-shrink-0" />
                   <div className="flex-1">
-                    <p className="text-xs text-gray-400 font-medium">Days Active</p>
-                    <p className="text-sm text-white">{getDaysActive(user?.created_at)} days</p>
+                    <p className="text-[10px] sm:text-xs text-gray-400 font-medium">Days Active</p>
+                    <p className="text-xs sm:text-sm text-white">{getDaysActive(user?.created_at)} days</p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Quick Actions Card */}
-            <div className="bg-gray-800/50 rounded-xl shadow-xl border border-gray-700 p-6 backdrop-blur-sm">
-              <h3 className="text-lg font-semibold text-white mb-4">Quick Actions</h3>
-              <div className="space-y-2">
+            <div className="bg-gray-800/50 rounded-xl shadow-xl border border-gray-700 p-4 sm:p-6 backdrop-blur-sm">
+              <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Quick Actions</h3>
+              <div className="space-y-1.5 sm:space-y-2">
                 <button
                   onClick={() => setShowPreferences(!showPreferences)}
-                  className="w-full flex items-center space-x-3 px-4 py-3 text-left rounded-lg bg-gray-700/30 border border-gray-600 hover:bg-gray-700/50 transition-all group"
+                  className="w-full flex items-center space-x-2.5 sm:space-x-3 px-3 py-2.5 sm:px-4 sm:py-3 text-left rounded-lg bg-gray-700/30 border border-gray-600 hover:bg-gray-700/50 transition-all group"
                 >
-                  <Settings size={20} className="text-gray-400 group-hover:text-blue-400 transition-colors" />
-                  <span className="text-sm font-medium text-gray-300 group-hover:text-white">Preferences</span>
+                  <Settings size={18} className="text-gray-400 group-hover:text-blue-400 transition-colors sm:w-5 sm:h-5" />
+                  <span className="text-xs sm:text-sm font-medium text-gray-300 group-hover:text-white">Preferences</span>
                 </button>
-                <button className="w-full flex items-center space-x-3 px-4 py-3 text-left rounded-lg bg-gray-700/30 border border-gray-600 hover:bg-gray-700/50 transition-all group">
-                  <Key size={20} className="text-gray-400 group-hover:text-purple-400 transition-colors" />
-                  <span className="text-sm font-medium text-gray-300 group-hover:text-white">Change Password</span>
+                <button className="w-full flex items-center space-x-2.5 sm:space-x-3 px-3 py-2.5 sm:px-4 sm:py-3 text-left rounded-lg bg-gray-700/30 border border-gray-600 hover:bg-gray-700/50 transition-all group">
+                  <Key size={18} className="text-gray-400 group-hover:text-purple-400 transition-colors sm:w-5 sm:h-5" />
+                  <span className="text-xs sm:text-sm font-medium text-gray-300 group-hover:text-white">Change Password</span>
                 </button>
-                <button className="w-full flex items-center space-x-3 px-4 py-3 text-left rounded-lg bg-gray-700/30 border border-gray-600 hover:bg-gray-700/50 transition-all group">
-                  <Bell size={20} className="text-gray-400 group-hover:text-amber-400 transition-colors" />
-                  <span className="text-sm font-medium text-gray-300 group-hover:text-white">Notifications</span>
+                <button className="w-full flex items-center space-x-2.5 sm:space-x-3 px-3 py-2.5 sm:px-4 sm:py-3 text-left rounded-lg bg-gray-700/30 border border-gray-600 hover:bg-gray-700/50 transition-all group">
+                  <Bell size={18} className="text-gray-400 group-hover:text-amber-400 transition-colors sm:w-5 sm:h-5" />
+                  <span className="text-xs sm:text-sm font-medium text-gray-300 group-hover:text-white">Notifications</span>
                 </button>
-                <button className="w-full flex items-center space-x-3 px-4 py-3 text-left rounded-lg bg-gray-700/30 border border-gray-600 hover:bg-gray-700/50 transition-all group">
-                  <Lock size={20} className="text-gray-400 group-hover:text-pink-400 transition-colors" />
-                  <span className="text-sm font-medium text-gray-300 group-hover:text-white">Privacy & Security</span>
+                <button className="w-full flex items-center space-x-2.5 sm:space-x-3 px-3 py-2.5 sm:px-4 sm:py-3 text-left rounded-lg bg-gray-700/30 border border-gray-600 hover:bg-gray-700/50 transition-all group">
+                  <Lock size={18} className="text-gray-400 group-hover:text-pink-400 transition-colors sm:w-5 sm:h-5" />
+                  <span className="text-xs sm:text-sm font-medium text-gray-300 group-hover:text-white">Privacy & Security</span>
                 </button>
               </div>
             </div>
@@ -317,20 +317,20 @@ const Profile = () => {
           </div>
 
           {/* Right Column - Stats and Details */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-4 sm:space-y-6">
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
               {getRoleStats(user?.role).map((stat, index) => {
                 const Icon = stat.icon;
                 return (
-                  <div key={index} className="bg-gray-800/50 rounded-xl border border-gray-700 p-6 hover:bg-gray-800/70 hover:border-gray-600 transition-all backdrop-blur-sm">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className={`p-3 rounded-lg bg-gray-700/50`}>
-                        <Icon size={24} className={stat.color} />
+                  <div key={index} className="bg-gray-800/50 rounded-xl border border-gray-700 p-4 sm:p-6 hover:bg-gray-800/70 hover:border-gray-600 transition-all backdrop-blur-sm">
+                    <div className="flex items-center justify-between mb-2 sm:mb-3">
+                      <div className={`p-2 sm:p-3 rounded-lg bg-gray-700/50`}>
+                        <Icon size={20} className={`${stat.color} sm:w-6 sm:h-6`} />
                       </div>
                     </div>
-                    <p className="text-2xl font-bold text-white mb-1">{stat.value}</p>
-                    <p className="text-sm text-gray-400">{stat.label}</p>
+                    <p className="text-xl sm:text-2xl font-bold text-white mb-0.5 sm:mb-1">{stat.value}</p>
+                    <p className="text-xs sm:text-sm text-gray-400">{stat.label}</p>
                   </div>
                 );
               })}
@@ -338,36 +338,36 @@ const Profile = () => {
 
             {/* Achievements & Badges */}
             {user?.role === 'student' && (
-              <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-6 backdrop-blur-sm">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-white">Achievements</h3>
+              <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-4 sm:p-6 backdrop-blur-sm">
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <h3 className="text-base sm:text-lg font-semibold text-white">Achievements</h3>
                   <span className="text-xs text-gray-400">12 Total</span>
                 </div>
-                <div className="grid grid-cols-4 gap-4">
-                  <div className="flex flex-col items-center p-3 bg-yellow-600/20 border border-yellow-600/40 rounded-lg hover:bg-yellow-600/30 transition-all cursor-pointer group">
-                    <Award size={28} className="text-yellow-400 mb-2" />
-                    <span className="text-xs text-gray-300 text-center">First Course</span>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
+                  <div className="flex flex-col items-center p-2.5 sm:p-3 bg-yellow-600/20 border border-yellow-600/40 rounded-lg hover:bg-yellow-600/30 transition-all cursor-pointer group">
+                    <Award size={22} className="text-yellow-400 mb-1.5 sm:mb-2 sm:w-7 sm:h-7" />
+                    <span className="text-[10px] sm:text-xs text-gray-300 text-center">First Course</span>
                   </div>
-                  <div className="flex flex-col items-center p-3 bg-blue-600/20 border border-blue-600/40 rounded-lg hover:bg-blue-600/30 transition-all cursor-pointer group">
-                    <BookOpen size={28} className="text-blue-400 mb-2" />
-                    <span className="text-xs text-gray-300 text-center">5 Courses</span>
+                  <div className="flex flex-col items-center p-2.5 sm:p-3 bg-blue-600/20 border border-blue-600/40 rounded-lg hover:bg-blue-600/30 transition-all cursor-pointer group">
+                    <BookOpen size={22} className="text-blue-400 mb-1.5 sm:mb-2 sm:w-7 sm:h-7" />
+                    <span className="text-[10px] sm:text-xs text-gray-300 text-center">5 Courses</span>
                   </div>
-                  <div className="flex flex-col items-center p-3 bg-purple-600/20 border border-purple-600/40 rounded-lg hover:bg-purple-600/30 transition-all cursor-pointer group">
-                    <TrendingUp size={28} className="text-purple-400 mb-2" />
-                    <span className="text-xs text-gray-300 text-center">Top 10%</span>
+                  <div className="flex flex-col items-center p-2.5 sm:p-3 bg-purple-600/20 border border-purple-600/40 rounded-lg hover:bg-purple-600/30 transition-all cursor-pointer group">
+                    <TrendingUp size={22} className="text-purple-400 mb-1.5 sm:mb-2 sm:w-7 sm:h-7" />
+                    <span className="text-[10px] sm:text-xs text-gray-300 text-center">Top 10%</span>
                   </div>
-                  <div className="flex flex-col items-center p-3 bg-emerald-600/20 border border-emerald-600/40 rounded-lg hover:bg-emerald-600/30 transition-all cursor-pointer group">
-                    <Clock size={28} className="text-emerald-400 mb-2" />
-                    <span className="text-xs text-gray-300 text-center">100 Hours</span>
+                  <div className="flex flex-col items-center p-2.5 sm:p-3 bg-emerald-600/20 border border-emerald-600/40 rounded-lg hover:bg-emerald-600/30 transition-all cursor-pointer group">
+                    <Clock size={22} className="text-emerald-400 mb-1.5 sm:mb-2 sm:w-7 sm:h-7" />
+                    <span className="text-[10px] sm:text-xs text-gray-300 text-center">100 Hours</span>
                   </div>
                 </div>
               </div>
             )}
 
             {/* Account Information */}
-            <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-6 backdrop-blur-sm">
-              <h3 className="text-lg font-semibold text-white mb-6">Account Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-4 sm:p-6 backdrop-blur-sm">
+              <h3 className="text-base sm:text-lg font-semibold text-white mb-4 sm:mb-6">Account Information</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 <div className="space-y-1">
                   <label className="text-sm font-medium text-gray-400">Full Name</label>
                   <p className="text-base text-white font-medium">{user?.name}</p>
