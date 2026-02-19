@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../../components/Layout';
-import axios from 'axios';
+import { studentAPI } from '../../services/api';
 import { Clock, MessageSquare, Sparkles, Search, Filter } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
 import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
-
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function StudentHistory() {
   const [history, setHistory] = useState([]);
@@ -19,10 +17,7 @@ export default function StudentHistory() {
 
   const fetchHistory = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`${BACKEND_URL}/api/student/history`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await studentAPI.getHistory();
       setHistory(response.data.queries || []);
     } catch (error) {
       console.error('Error fetching history:', error);

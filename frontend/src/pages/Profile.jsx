@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { authAPI } from '../services/api';
 import Layout from '../components/Layout';
 import { User, Mail, Shield, Calendar, Award, BookOpen, TrendingUp, Clock, Settings, Bell, Lock, Edit2, Save, X, Camera, Key, Globe, Moon, Sun } from 'lucide-react';
 
@@ -23,10 +23,7 @@ const Profile = () => {
 
   const fetchUserProfile = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/auth/me`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await authAPI.getProfile();
       setUser(response.data);
       setEditedName(response.data.name);
       setLoading(false);

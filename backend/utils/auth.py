@@ -3,17 +3,10 @@ from typing import List, Dict
 
 from fastapi import HTTPException, Depends, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from jose import JWTError, ExpiredSignatureError, jwt
-from passlib.context import CryptContext
-
+from typing import List
+import jwt
+import bcrypt
 from config import settings
-
-
-# 🔐 Password hashing context
-pwd_context = CryptContext(
-    schemes=["bcrypt_sha256"],  # Safe & no 72-byte limit
-    deprecated="auto"
-)
 
 security = HTTPBearer()
 
@@ -23,14 +16,27 @@ security = HTTPBearer()
 # ==========================
 
 def hash_password(password: str) -> str:
-    """Hash a password securely."""
+    """Hash a password using bcrypt."""
+    # Bcrypt has a 72-byte limit, so truncate if needed
+    password_bytes = password.encode('utf-8')
+    if len(password_bytes) > 72:
+        password_bytes = password_bytes[:72]
     
-    return pwd_context.hash(password)
+    # Generate salt and hash
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(password_bytes, salt)
+    return hashed.decode('utf-8')
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verify plain password against stored hash."""
-    return pwd_context.verify(plain_password, hashed_password)
+    """Verify a password against its hash."""
+    # Apply same truncation as hash_password
+    password_bytes = plain_password.encode('utf-8')
+    if len(password_bytes) > 72:
+        password_bytes = password_bytes[:72]
+    
+    # Verify
+    return bcrypt.checkpw(password_bytes, hashed_password.encode('utf-8'))
 
 
 # ==========================

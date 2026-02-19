@@ -36,35 +36,43 @@ async def register(user_data: UserCreate):
 @router.post("/login", response_model=Token)
 async def login(credentials: UserLogin):
     """Login user and return JWT token."""
-    db = await get_database()
-    
-    # Find user
-    user = await db.users.find_one(
-        {"email": credentials.email, "role": credentials.role},
-        {"_id": 0}
-    )
-    if not user:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    
-    # Verify password
-    if not verify_password(credentials.password, user["password"]):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    
-    # Create access token
-    access_token = create_access_token(
-        data={"sub": user["id"], "email": user["email"], "role": user["role"]}
-    )
-    
-    # Remove password from response
-    user.pop("password")
-    if isinstance(user["created_at"], str):
-        user["created_at"] = datetime.fromisoformat(user["created_at"])
-    
-    return {
-        "access_token": access_token,
-        "token_type": "bearer",
-        "user": User(**user)
-    }
+    try:
+        db = await get_database()
+        
+        # Find user
+        user = await db.users.find_one(
+            {"email": credentials.email, "role":credentials.role},
+            {"_id": 0}
+        )
+        if not user:
+            raise HTTPException(status_code=401, detail="Invalid credentials")
+        
+        # Verify password
+        if not verify_password(credentials.password, user["password"]):
+            raise HTTPException(status_code=401, detail="Invalid credentials")
+        
+        # Create access token
+        access_token = create_access_token(
+            data={"sub": user["id"], "email": user["email"], "role": user["role"]}
+        )
+        
+        # Remove password from response
+        user.pop("password")
+        if isinstance(user["created_at"], str):
+            user["created_at"] = datetime.fromisoformat(user["created_at"])
+        
+        return {
+            "access_token": access_token,
+            "token_type": "bearer",
+            "user": User(**user)
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Login error: {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Login error: {str(e)}")
 
 @router.get("/me", response_model=User)
 async def get_me(current_user: dict = Depends(get_current_user)):

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../../components/Layout';
-import { Send, MessageSquare, Bot, User as UserIcon } from 'lucide-react';
+import { Send, MessageSquare, Bot, User as UserIcon, Loader2 } from 'lucide-react';
 import { Card, CardContent } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
@@ -13,32 +13,161 @@ import {
   AccordionTrigger,
 } from '../../components/ui/accordion';
 import { Badge } from '../../components/ui/badge';
+import { queryAPI, studentAPI } from '../../services/api';
 
 export default function StudentChat() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [model, setModel] = useState('campus-rag');
+  const [isLoading, setIsLoading] = useState(false);
+  const [chatHistory, setChatHistory] = useState([]);
+  const messagesEndRef = useRef(null);
 
-  const handleSend = () => {
-    if (!input.trim()) return;
+  // Scroll to bottom when messages change
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  // Load chat history on mount
+  useEffect(() => {
+    loadChatHistory();
+  }, []);
+
+  const loadChatHistory = async () => {
+    try {
+      const response = await studentAPI.getHistory();
+      setChatHistory(response.data.queries || []);
+    } catch (error) {
+      console.error('Error loading chat history:', error);
+    }
+  };
+
+  const handleSend = async () => {
+    if (!input.trim() || isLoading) return;
 
     const userMessage = { text: input, sender: 'user' };
     setMessages((prev) => [...prev, userMessage]);
+    const currentQuestion = input;
     setInput('');
+    setIsLoading(true);
 
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          text: 'This is a placeholder response. CampusGPT AI integration will be added here.',
+    // Add placeholder bot message
+    const botMessageIndex = messages.length + 1;
+    setMessages((prev) => [
+      ...prev,
+      { text: '', sender: 'bot', citations: [], isStreaming: true },
+    ]);
+
+    try {
+      if (model === 'campus-rag') {
+        // Use streaming for Campus RAG
+        const reader = await queryAPI.askQuestion(currentQuestion, true);
+        const decoder = new TextDecoder();
+        let accumulatedText = '';
+        let sources = [];
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value, { stream: true });
+          const lines = chunk.split('\n');
+
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              try {
+                const data = JSON.parse(line.slice(6));
+
+                if (data.type === 'sources') {
+                  sources = data.data;
+                } else if (data.type === 'chunk') {
+                  accumulatedText += data.data;
+                  // Update the bot message with accumulated text
+                  setMessages((prev) => {
+                    const newMessages = [...prev];
+                    newMessages[botMessageIndex] = {
+                      text: accumulatedText,
+                      sender: 'bot',
+                      citations: sources,
+                      isStreaming: true,
+                    };
+                    return newMessages;
+                  });
+                } else if (data.type === 'done') {
+                  // Mark streaming as complete
+                  setMessages((prev) => {
+                    const newMessages = [...prev];
+                    newMessages[botMessageIndex] = {
+                      text: accumulatedText,
+                      sender: 'bot',
+                      citations: sources,
+                      isStreaming: false,
+                    };
+                    return newMessages;
+                  });
+                  // Reload history to include new query
+                  loadChatHistory();
+                } else if (data.type === 'error') {
+                  console.error('Streaming error:', data.message);
+                  setMessages((prev) => {
+                    const newMessages = [...prev];
+                    newMessages[botMessageIndex] = {
+                      text: `Error: ${data.message}`,
+                      sender: 'bot',
+                      citations: [],
+                      isStreaming: false,
+                    };
+                    return newMessages;
+                  });
+                }
+              } catch (e) {
+                console.error('Error parsing SSE data:', e);
+              }
+            }
+          }
+        }
+      } else {
+        // GPT-4.0 - use non-streaming (placeholder for now)
+        const response = await queryAPI.askQuestion(currentQuestion, false);
+        setMessages((prev) => {
+          const newMessages = [...prev];
+          newMessages[botMessageIndex] = {
+            text: response.data.answer,
+            sender: 'bot',
+            citations: response.data.sources || [],
+            isStreaming: false,
+          };
+          return newMessages;
+        });
+        loadChatHistory();
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+      setMessages((prev) => {
+        const newMessages = [...prev];
+        newMessages[botMessageIndex] = {
+          text: 'Sorry, there was an error processing your request. Please try again.',
           sender: 'bot',
-          citations: [
-            { id: 1, label: 'PDF', name: 'Campus Handbook', page: 5, timestamp: '00:12:34' },
-            { id: 2, label: 'Slide', name: 'Orientation Deck', page: 12, timestamp: '00:03:21' },
-          ],
-        },
-      ]);
-    }, 500);
+          citations: [],
+          isStreaming: false,
+        };
+        return newMessages;
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const loadHistoryChat = (query) => {
+    // Load a previous chat into the current conversation
+    setMessages([
+      { text: query.question, sender: 'user' },
+      { text: query.answer, sender: 'bot', citations: query.sources || [] },
+    ]);
   };
 
   return (
@@ -57,21 +186,27 @@ export default function StudentChat() {
               <Button
                 type="button"
                 size="icon"
+                onClick={() => setMessages([])}
                 className="h-8 w-8 rounded-lg bg-surface-2 text-xs text-foreground hover:bg-surface"
               >
                 +
               </Button>
             </div>
             <div className="flex-1 space-y-2 overflow-auto">
-              <div className="rounded-xl border border-border bg-surface-2 px-3 py-2 text-xs text-foreground">
-                <p className="truncate">What are the library hours this week?</p>
-              </div>
-              <div className="rounded-xl border border-border bg-surface-2 px-3 py-2 text-xs text-foreground">
-                <p className="truncate">Explain my course credit requirements.</p>
-              </div>
-              <div className="rounded-xl border border-border bg-surface-2 px-3 py-2 text-xs text-foreground">
-                <p className="truncate">Upcoming campus events this month?</p>
-              </div>
+              {chatHistory.slice(0, 10).map((query, idx) => (
+                <div
+                  key={query._id || idx}
+                  onClick={() => loadHistoryChat(query)}
+                  className="cursor-pointer rounded-xl border border-border bg-surface-2 px-3 py-2 text-xs text-foreground hover:bg-surface transition-colors"
+                >
+                  <p className="truncate">{query.question}</p>
+                </div>
+              ))}
+              {chatHistory.length === 0 && (
+                <div className="text-center text-xs text-muted-foreground pt-4">
+                  No chat history yet
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -151,7 +286,9 @@ export default function StudentChat() {
                             : 'border border-border bg-card text-foreground rounded-2xl'
                         }
                       >
-                        <CardContent className="p-3 text-sm leading-relaxed">{msg.text}</CardContent>
+                        <CardContent className="p-3 text-sm leading-relaxed">
+                          {msg.text || (msg.isStreaming && <Loader2 className="h-4 w-4 animate-spin" />)}
+                        </CardContent>
                       </Card>
                       {msg.sender === 'bot' && msg.citations && msg.citations.length > 0 && (
                         <Accordion type="single" collapsible className="w-full">
@@ -188,6 +325,7 @@ export default function StudentChat() {
                     </div>
                   </div>
                 ))}
+                <div ref={messagesEndRef} />
               </div>
             )}
           </div>
@@ -207,15 +345,26 @@ export default function StudentChat() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask a question about your campus..."
+                disabled={isLoading}
                 className="h-11 flex-1 rounded-xl border-border bg-surface-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary"
               />
               <Button
                 type="submit"
                 data-testid="send-button"
-                className="h-10 rounded-xl bg-primary px-5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+                disabled={isLoading || !input.trim()}
+                className="h-10 rounded-xl bg-primary px-5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
               >
-                <Send className="mr-2 h-4 w-4" />
-                Send
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Send className="mr-2 h-4 w-4" />
+                    Send
+                  </>
+                )}
               </Button>
             </form>
           </div>
