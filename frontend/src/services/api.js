@@ -74,6 +74,7 @@ export const queryAPI = {
             if (!response.ok) {
               throw new Error(`HTTP error! status: ${response.status}`);
             }
+            
             resolve(response.body.getReader());
           })
           .catch(reject);
