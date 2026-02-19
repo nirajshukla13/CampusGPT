@@ -1,84 +1,127 @@
-from fastapi import APIRouter, HTTPException, Depends
-from schemas import User, UserCreate, UserLogin, Token
-from utils import hash_password, verify_password, create_access_token, get_current_user
-from database import get_database
-from datetime import datetime
-import uuid
+from datetime import datetime, timedelta, timezone
+from typing import List, Dict
 
-router = APIRouter(prefix="/auth", tags=["Authentication"])
+from fastapi import HTTPException, Depends, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from typing import List
+import jwt
+import bcrypt
+from config import settings
 
-@router.post("/register", response_model=User)
-async def register(user_data: UserCreate):
-    """Register a new user."""
-    db = await get_database()
-    
-    # Check if user already exists
-    existing_user = await db.users.find_one({"email": user_data.email}, {"_id": 0})
-    if existing_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    
-    # Create new user
-    user = User(
-        name=user_data.name,
-        email=user_data.email,
-        role=user_data.role
-    )
-    
-    # Prepare user dict for database
-    user_dict = user.model_dump()
-    user_dict["password"] = hash_password(user_data.password)
-    user_dict["created_at"] = user_dict["created_at"].isoformat()
-    
-    # Insert into database
-    await db.users.insert_one(user_dict)
-    return user
+security = HTTPBearer()
 
-@router.post("/login", response_model=Token)
-async def login(credentials: UserLogin):
-    """Login user and return JWT token."""
-    db = await get_database()
-    
-    # Find user
-    user = await db.users.find_one(
-        {"email": credentials.email, "role": credentials.role},
-        {"_id": 0}
-    )
-    if not user:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    
-    # Verify password
-    if not verify_password(credentials.password, user["password"]):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    
-    # Create access token
-    access_token = create_access_token(
-        data={"sub": user["id"], "email": user["email"], "role": user["role"]}
-    )
-    
-    # Remove password from response
-    user.pop("password")
-    if isinstance(user["created_at"], str):
-        user["created_at"] = datetime.fromisoformat(user["created_at"])
-    
-    return {
-        "access_token": access_token,
-        "token_type": "bearer",
-        "user": User(**user)
-    }
 
-@router.get("/me", response_model=User)
-async def get_me(current_user: dict = Depends(get_current_user)):
-    """Get current user profile."""
-    db = await get_database()
+# ==========================
+# 🔑 PASSWORD FUNCTIONS
+# ==========================
+
+def hash_password(password: str) -> str:
+    """Hash a password using bcrypt."""
+    # Bcrypt has a 72-byte limit, so truncate if needed
+    password_bytes = password.encode('utf-8')
+    if len(password_bytes) > 72:
+        password_bytes = password_bytes[:72]
     
-    user = await db.users.find_one(
-        {"id": current_user["user_id"]},
-        {"_id": 0, "password": 0}
+    # Generate salt and hash
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(password_bytes, salt)
+    return hashed.decode('utf-8')
+
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """Verify a password against its hash."""
+    # Apply same truncation as hash_password
+    password_bytes = plain_password.encode('utf-8')
+    if len(password_bytes) > 72:
+        password_bytes = password_bytes[:72]
+    
+    # Verify
+    return bcrypt.checkpw(password_bytes, hashed_password.encode('utf-8'))
+
+
+# ==========================
+# 🔐 JWT TOKEN FUNCTIONS
+# ==========================
+
+def create_access_token(data: Dict) -> str:
+    """Create a JWT access token."""
+    to_encode = data.copy()
+
+    expire = datetime.now(timezone.utc) + timedelta(
+        minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
     )
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+
+    to_encode.update({"exp": expire})
+
+    encoded_jwt = jwt.encode(
+        to_encode,
+        settings.JWT_SECRET_KEY,
+        algorithm=settings.JWT_ALGORITHM
+    )
+
+    return encoded_jwt
+
+
+# ==========================
+# 👤 GET CURRENT USER
+# ==========================
+
+async def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+) -> Dict:
+    """Extract and validate user from JWT token."""
     
-    if isinstance(user["created_at"], str):
-        user["created_at"] = datetime.fromisoformat(user["created_at"])
-    
-    return User(**user)
+    token = credentials.credentials
+
+    try:
+        payload = jwt.decode(
+            token,
+            settings.JWT_SECRET_KEY,
+            algorithms=[settings.JWT_ALGORITHM]
+        )
+
+        user_id: str = payload.get("sub")
+        role: str = payload.get("role")
+        email: str = payload.get("email")
+
+        if user_id is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid authentication credentials"
+            )
+
+        return {
+            "user_id": user_id,
+            "role": role,
+            "email": email
+        }
+
+    except ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token has expired"
+        )
+
+    except JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials"
+        )
+
+
+# ==========================
+# 🛡 ROLE BASED ACCESS
+# ==========================
+
+def require_role(allowed_roles: List[str]):
+    """Dependency to check user role."""
+
+    async def role_checker(current_user: Dict = Depends(get_current_user)):
+        if current_user["role"] not in allowed_roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Access forbidden"
+            )
+        return current_user
+
+    return role_checker

@@ -11,8 +11,10 @@ from routes import (
     admin_router,
     seed_router,
     query_router,
-    ingest_router
+    ingest_router,
+    
 )
+from routes.diagram_routes import router as diagram_router
 
 # Configure logging
 logging.basicConfig(
@@ -59,8 +61,10 @@ app.include_router(admin_router, prefix=settings.API_PREFIX)
 app.include_router(seed_router, prefix=settings.API_PREFIX)
 app.include_router(query_router, prefix=settings.API_PREFIX)
 app.include_router(ingest_router, prefix=settings.API_PREFIX)
+app.include_router(diagram_router, prefix=settings.API_PREFIX + "/diagram")
 
-# Root endpoint
+# Root endpointgit status
+
 @app.get("/")
 async def root():
     return {

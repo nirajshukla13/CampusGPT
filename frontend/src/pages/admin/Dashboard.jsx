@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../../components/Layout';
-import axios from 'axios';
+import { adminAPI } from '../../services/api';
 import { Users, GraduationCap, UserCheck, Shield } from 'lucide-react';
-
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
@@ -14,10 +12,7 @@ export default function AdminDashboard() {
 
   const fetchStats = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`${BACKEND_URL}/api/admin/dashboard`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await adminAPI.getDashboard();
       setStats(response.data);
     } catch (error) {
       console.error('Error fetching stats:', error);

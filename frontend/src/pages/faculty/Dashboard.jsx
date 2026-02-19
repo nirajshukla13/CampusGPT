@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../../components/Layout';
-import axios from 'axios';
+import { facultyAPI } from '../../services/api';
 import { FileText, Users, TrendingUp } from 'lucide-react';
-
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function FacultyDashboard() {
   const [dashboardData, setDashboardData] = useState(null);
@@ -14,10 +12,7 @@ export default function FacultyDashboard() {
 
   const fetchDashboard = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`${BACKEND_URL}/api/faculty/dashboard`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await facultyAPI.getDashboard();
       setDashboardData(response.data);
     } catch (error) {
       console.error('Error fetching dashboard:', error);

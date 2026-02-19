@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../../components/Layout';
-import axios from 'axios';
+import { adminAPI } from '../../services/api';
 import { User, Mail } from 'lucide-react';
-
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function AdminUsers() {
   const [users, setUsers] = useState([]);
@@ -14,10 +12,7 @@ export default function AdminUsers() {
 
   const fetchUsers = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`${BACKEND_URL}/api/admin/users`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await adminAPI.getUsers();
       setUsers(response.data);
     } catch (error) {
       console.error('Error fetching users:', error);

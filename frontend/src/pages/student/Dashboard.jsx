@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../../components/Layout';
-import axios from 'axios';
+import { studentAPI } from '../../services/api';
 import {
   Search,
   Clock,
@@ -22,8 +22,6 @@ import { Badge } from '../../components/ui/badge';
 import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-
 export default function StudentDashboard() {
   const navigate = useNavigate();
   const [dashboardData, setDashboardData] = useState(null);
@@ -35,10 +33,7 @@ export default function StudentDashboard() {
 
   const fetchDashboard = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`${BACKEND_URL}/api/student/dashboard`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await studentAPI.getDashboard();
       setDashboardData(response.data);
     } catch (error) {
       console.error('Error fetching dashboard:', error);

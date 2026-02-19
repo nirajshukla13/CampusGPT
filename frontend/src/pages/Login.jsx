@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { authAPI } from '../services/api';
 import { GraduationCap, Eye, EyeOff } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '../components/ui/card';
 import { Input } from '../components/ui/input';
 import { Button } from '../components/ui/button';
-
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function Login() {
   const navigate = useNavigate();
@@ -28,23 +26,24 @@ export default function Login() {
 
     try {
       if (isRegister) {
-        await axios.post(`${BACKEND_URL}/api/auth/register`, formData);
+        await authAPI.register(formData);
         setError('');
         alert('Registration successful! Please login.');
         setIsRegister(false);
         setFormData({ ...formData, name: '', password: '' });
       } else {
-        const response = await axios.post(`${BACKEND_URL}/api/auth/login`, {
+        const response = await authAPI.login({
           email: formData.email,
           password: formData.password,
           role: formData.role
         });
+        
         const { access_token, user } = response.data;
 
         localStorage.setItem('token', access_token);
         localStorage.setItem('role', user.role);
         localStorage.setItem('userName', user.name);
-
+        
         navigate(`/${user.role}/dashboard`);
       }
     } catch (err) {
@@ -184,26 +183,6 @@ export default function Login() {
                 {isRegister ? 'Sign in' : 'Create account'}
               </Button>
             </div>
-
-            {!isRegister && (
-              <div className="mt-4 border-t border-[#1F2937] pt-4 text-xs text-[#9CA3AF]">
-                <p className="mb-2 font-medium text-[#E5E7EB]">Demo credentials</p>
-                <div className="space-y-1 font-mono">
-                  <div className="flex justify-between">
-                    <span>Student</span>
-                    <span className="text-[#E5E7EB]">student@campus.com / student123</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Faculty</span>
-                    <span className="text-[#E5E7EB]">faculty@campus.com / faculty123</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Admin</span>
-                    <span className="text-[#E5E7EB]">admin@campus.com / admin123</span>
-                  </div>
-                </div>
-              </div>
-            )}
           </CardContent>
         </Card>
       </div>
