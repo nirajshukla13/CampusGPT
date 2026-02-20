@@ -5,6 +5,7 @@ from fastapi import HTTPException, Depends, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from typing import List
 import jwt
+from jwt import ExpiredSignatureError, PyJWTError as JWTError
 import bcrypt
 from config import settings
 

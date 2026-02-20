@@ -29,7 +29,9 @@ const Profile = () => {
       setEditedName(response.data.name);
       setLoading(false);
     } catch (err) {
-      setError('Failed to load profile');
+      console.error('Profile fetch error:', err);
+      const errorMessage = err.response?.data?.detail || err.message || 'Failed to load profile';
+      setError(errorMessage);
       setLoading(false);
     }
   };

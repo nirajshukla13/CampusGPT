@@ -95,22 +95,21 @@ export default function StudentEvents() {
   return (
     <Layout role="student">
       <div className="space-y-8" style={{ backgroundColor: appColors.mainBackground, minHeight: '100vh', padding: '1.5rem' }}>
-        {/* Header with gradient title */}
-        <div className="relative space-y-2 pb-6">
+        {/* Header */}
+        <div className="space-y-1">
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border-2 border-primary/30">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 border border-primary/20">
               <Calendar className="h-6 w-6 text-primary" />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-foreground md:text-4xl">
                 Campus Events Timeline
               </h1>
-              <p className="text-sm text-muted-foreground md:text-base">
-                Explore upcoming events in chronological order
-              </p>
             </div>
           </div>
-          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+          <p className="text-sm text-muted-foreground md:text-base pl-15">
+            Explore upcoming events in chronological order
+          </p>
         </div>
 
         {/* Search and quick stats */}
@@ -191,7 +190,7 @@ export default function StudentEvents() {
                 >
                   {/* Date Badge - Always on left for mobile, alternates on desktop */}
                   <div className="flex-shrink-0">
-                    <div className="flex h-16 w-16 flex-col items-center justify-center rounded-2xl border-2 border-primary bg-gradient-to-br from-primary/20 to-primary/5 shadow-lg shadow-primary/20">
+                    <div className="flex h-16 w-16 flex-col items-center justify-center rounded-2xl border-2 border-primary bg-primary/10 shadow-md shadow-black/20">
                       <span className="text-[10px] font-bold text-primary">{dateInfo.month}</span>
                       <span className="text-2xl font-bold text-foreground">{dateInfo.day}</span>
                     </div>
@@ -217,6 +216,7 @@ export default function StudentEvents() {
                           src={getEventImage(event.category)}
                           alt={event.title}
                           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                          loading="lazy"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                         
@@ -227,8 +227,8 @@ export default function StudentEvents() {
                             {event.category}
                           </Badge>
                           {event.is_featured && (
-                            <Badge className="flex items-center gap-1 border border-yellow-500/30 bg-yellow-500/90 backdrop-blur-sm px-3 py-1.5 text-xs font-semibold text-white">
-                              <Star className="h-3 w-3" />
+                            <Badge className="flex items-center gap-1 border border-primary/30 bg-primary/90 backdrop-blur-sm px-3 py-1.5 text-xs font-semibold text-white">
+                              <Star className="h-3 w-3 fill-white" />
                               Featured
                             </Badge>
                           )}
