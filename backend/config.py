@@ -6,6 +6,8 @@ from google import genai
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
+UPLOADS_DIR = ROOT_DIR / "uploads"
+VECTOR_DB_DIR = ROOT_DIR / "dbV2"
 
 class Settings:
     # MongoDB

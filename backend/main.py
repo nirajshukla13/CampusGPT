@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import logging
 
-from config import settings
+from config import settings, UPLOADS_DIR, VECTOR_DB_DIR
 from database import connect_to_mongo, close_mongo_connection
 from routes import (
     auth_router,
@@ -13,6 +13,7 @@ from routes import (
     ingest_router,
     events_router
 )
+
 from routes.diagram_routes import router as diagram_router
 
 # Configure logging
@@ -28,6 +29,9 @@ app = FastAPI(
     description="Campus Management System with Role-Based Access Control",
     version="1.0.0"
 )
+
+UPLOADS_DIR.mkdir(exist_ok=True)
+VECTOR_DB_DIR.mkdir(exist_ok=True)
 
 # CORS Middleware
 app.add_middleware(

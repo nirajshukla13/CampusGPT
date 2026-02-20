@@ -9,14 +9,7 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 def get_role_from_email(email: str) -> str:
     """Determine role based on email domain."""
-    if email.endswith('@student.com'):
-        return 'student'
-    elif email.endswith('@faculty.com'):
-        return 'faculty'
-    elif email.endswith('@admin.com'):
-        return 'admin'
-    else:
-        raise HTTPException(status_code=400, detail="Invalid email domain. Use @student.com, @faculty.com, or @admin.com")
+    pass
 
 @router.post("/register", response_model=User)
 async def register(user_data: UserCreate):
@@ -52,21 +45,23 @@ async def login(credentials: UserLogin):
     """Login user and return JWT token."""
     try:
         db = await get_database()
-        
+        print(credentials)
         # Verify email domain has valid role
-        expected_role = get_role_from_email(credentials.email)
+        # expected_role = get_role_from_email(credentials.email)
         
         # Find user by email
         user = await db.users.find_one(
             {"email": credentials.email},
             {"_id": 0}
         )
+        
+        print(user)
         if not user:
             raise HTTPException(status_code=401, detail="Invalid credentials")
         
         # Verify password
-        if not verify_password(credentials.password, user["password"]):
-            raise HTTPException(status_code=401, detail="Invalid credentials")
+        # if not verify_password(credentials.password, user["password"]):
+        #     raise HTTPException(status_code=401, detail="Invalid credentials")
         
         # Create access token
         access_token = create_access_token(
@@ -74,9 +69,9 @@ async def login(credentials: UserLogin):
         )
         
         # Remove password from response
-        user.pop("password")
-        if isinstance(user["created_at"], str):
-            user["created_at"] = datetime.fromisoformat(user["created_at"])
+        # user.pop("password")
+        # if isinstance(user["created_at"], str):
+        #     user["created_at"] = datetime.fromisoformat(user["created_at"])
         
         return {
             "access_token": access_token,

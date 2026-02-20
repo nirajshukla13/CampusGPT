@@ -31,7 +31,7 @@ class DiagramService:
 
         return diagram_code
 
-    def generate_diagram(self, user_query: str) -> dict:
+    def generate_diagram(self, user_query: str, chunks: str) -> dict:
         """
         Main function to generate explanation + Mermaid diagram.
         """
@@ -44,7 +44,7 @@ class DiagramService:
 
         try:
             # 1️⃣ Build Prompt
-            prompt = build_diagram_prompt(user_query)
+            prompt = build_diagram_prompt(user_query, chunks)
 
             # 2️⃣ Call LLM
             raw_output = self.llm_service.generate(prompt)

@@ -1,8 +1,5 @@
 from fastapi import APIRouter, Depends
-from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-import json
-import asyncio
 from typing import Optional
 from datetime import datetime
 
@@ -22,8 +19,7 @@ diagram_service = DiagramService()
 
 class QueryRequest(BaseModel):
     question: str
-    stream: Optional[bool] = False
-
+    session_id: str
 
 @router.post("")
 async def ask_question(
@@ -31,183 +27,70 @@ async def ask_question(
     current_user: dict = Depends(require_role(["student", "faculty", "admin"]))
 ):
     try:
+        print(request)
         question = request.question
+        conversation_id = request.session_id
 
-        # 🔥 STEP 1: Decide if diagram needed
-        decision = decision_service.decide(question)
+        db = await get_database()
 
-        needs_diagram = decision.get("needs_diagram", False)
-        diagram_query = decision.get("diagram_query", "")
-       
+        previous_messages = await db.query_history.find(
+            {
+                "conversation_id": conversation_id,
+                "email": current_user.get("email")
+            }
+        ).sort("timestamp", 1).limit(5).to_list(5)
 
-        
+        conversation_context = ""
+        for item in previous_messages:
+            conversation_context += f"User: {item['question']}\n"
+            conversation_context += f"Assistant: {item['answer']}\n"
 
-        diagram_data = None
-
-        # 🔥 STEP 2: Generate diagram safely
-        if needs_diagram:
-            try:
-                diagram_result = diagram_service.generate_diagram(diagram_query)
-
-                if diagram_result.get("success"):
-                    diagram_data = {
-                        "explanation": diagram_result["explanation"],
-                        "diagram": diagram_result["diagram"]
-                    }
-            except Exception as e:
-                print(f"[Diagram Error] {str(e)}")
-    
-
-        # 🔥 STEP 3: Retrieve chunks
         chunks = retrieve_chunks(question, k=3)
 
-        # Check if we have any chunks
-        if not chunks or len(chunks) == 0:
-            # No documents found in vectorstore
-            no_docs_message = "I apologize, but I don't have access to any documents in my knowledge base yet. Please ask an administrator to upload course materials, syllabi, or other campus documents so I can help answer your questions."
-            
-            if request.stream:
-                async def error_generator():
-                    yield f"data: {json.dumps({'type': 'sources', 'data': []})}\n\n"
-                    yield f"data: {json.dumps({'type': 'chunk', 'data': no_docs_message})}\n\n"
-                    yield f"data: {json.dumps({'type': 'done'})}\n\n"
-                
-                return StreamingResponse(
-                    error_generator(),
-                    media_type="text/event-stream",
-                    headers={
-                        "Cache-Control": "no-cache",
-                        "Connection": "keep-alive",
-                        "X-Accel-Buffering": "no",
-                        "Access-Control-Allow-Origin": "*",
-                    }
-                )
-            else:
-                return {
-                    "question": question,
-                    "answer": no_docs_message,
-                    "sources": [],
-                    "diagram": None
-                }
+        final_answer = generate_final_answer(
+            chunks=chunks,
+            query=question,
+            conversation_context=conversation_context
+        )
 
-        # Extract sources
-        sources = []
-        for i, chunk in enumerate(chunks):
-            metadata = chunk.metadata
-            sources.append({
-                "id": i + 1,
-                "name": metadata.get("source", "Unknown"),
-                "page": metadata.get("page", 1),
-                "label": metadata.get("type", "PDF"),
-                "timestamp": metadata.get("timestamp", "00:00:00")
-            })
+        decision = decision_service.decide(question)
+        needs_diagram = decision.get("needs_diagram", False)
+        diagram_response = None
 
-        # 🔥 STREAM MODE
-        if request.stream:
-
-            async def event_generator():
-                try:
-                    # Send sources
-                    yield f"data: {json.dumps({'type': 'sources', 'data': sources})}\n\n"
-                    await asyncio.sleep(0.1)
-
-                    # Generate answer
-                    answer = generate_final_answer(chunks=chunks, query=question)
-
-                    # Stream answer
-                    words = answer.split()
-                    for i, word in enumerate(words):
-                        yield f"data: {json.dumps({'type': 'chunk', 'data': word + (' ' if i < len(words)-1 else '')})}\n\n"
-                        await asyncio.sleep(0.02)
-
-                    # 🔥 Send diagram at end
-                    if diagram_data:
-                        yield f"data: {json.dumps({'type': 'diagram', 'data': diagram_data})}\n\n"
-
-                    # 🔥 Save history to database after streaming completes
-                    try:
-                        db = await get_database()
-                        await db.query_history.insert_one({
-                            "user_id": current_user.get("user_id"),
-                            "email": current_user.get("email"),
-                            "question": question,
-                            "answer": answer,
-                            "sources": sources,
-                            "diagram": diagram_data,
-                            "timestamp": datetime.utcnow()
-                        })
-                    except Exception as e:
-                        print(f"Error saving streaming history: {e}")
-
-                    yield f"data: {json.dumps({'type': 'done'})}\n\n"
-
-                except Exception as e:
-                    yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
-
-            return StreamingResponse(
-                event_generator(),
-                media_type="text/event-stream",
-                headers={
-                    "Cache-Control": "no-cache",
-                    "Connection": "keep-alive",
-                    "X-Accel-Buffering": "no",
-                    "Access-Control-Allow-Origin": "*",
-                }
-            )
-
-        # 🔥 NON-STREAM MODE
-        else:
-            answer = generate_final_answer(chunks=chunks, query=question)
-
-            # Save history
+        if needs_diagram:
             try:
-                db = await get_database()
-                await db.query_history.insert_one({
-                    "user_id": current_user.get("user_id"),
-                    "email": current_user.get("email"),
-                    "question": question,
-                    "answer": answer,
-                    "sources": sources,
-                    "diagram": diagram_data,
-                    "timestamp": datetime.utcnow()
-                })
+                diagram_data = diagram_service.generate_diagram(
+                    decision.get("diagram_query", ""),
+                    chunks
+                )
+                if diagram_data and diagram_data.get("success"):
+                    diagram_response = {
+                        "explanation": diagram_data["explanation"],
+                        "diagram": diagram_data["diagram"]
+                    }
             except Exception as e:
-                print(f"Error saving history: {e}")
+                print(f"[Diagram Error] {e}")
 
-            return {
-                "question": question,
-                "answer": answer,
-                "sources": sources,
-                "diagram": diagram_data
-            }
-    
+        await db.query_history.insert_one({
+            "conversation_id": conversation_id,
+            "user_id": current_user.get("user_id"),
+            "email": current_user.get("email"),
+            "question": question,
+            "answer": final_answer.answer,
+            "sources": [c.model_dump() for c in final_answer.citations],
+            "diagram": diagram_response,
+            "timestamp": datetime.utcnow()
+        })
+        print(final_answer)
+        return {
+            "answer": final_answer.model_dump() if final_answer else {},
+            "diagram": diagram_response
+        }
+
     except Exception as e:
-        print(f"[Query Error] {str(e)}")
-        import traceback
-        traceback.print_exc()
-        
-        # Return error in streaming or non-streaming format
-        if request.stream:
-            async def error_generator():
-                error_message = f"I encountered an error while processing your question: {str(e)}"
-                yield f"data: {json.dumps({'type': 'sources', 'data': []})}\n\n"
-                yield f"data: {json.dumps({'type': 'chunk', 'data': error_message})}\n\n"
-                yield f"data: {json.dumps({'type': 'done'})}\n\n"
-            
-            return StreamingResponse(
-                error_generator(),
-                media_type="text/event-stream",
-                headers={
-                    "Cache-Control": "no-cache",
-                    "Connection": "keep-alive",
-                    "X-Accel-Buffering": "no",
-                    "Access-Control-Allow-Origin": "*",
-                }
-            )
-        else:
-            return {
-                "question": question,
-                "answer": f"I encountered an error while processing your question: {str(e)}",
-                "sources": [],
-                "diagram": None
-            }
+        return {
+            "answer": "",
+            "citations": [],
+            "diagram": None,
+            "error": str(e)
+        }

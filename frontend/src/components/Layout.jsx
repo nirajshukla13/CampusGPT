@@ -342,7 +342,7 @@ const Layout = ({ children, role }) => {
                   {breadcrumbs.map((crumb, index) => {
                     const isLast = index === breadcrumbs.length - 1;
                     return (
-                      <React.Fragment key={crumb.path}>
+                      <React.Fragment key={index}>
                         {index > 0 && (
                           <span className="mx-1" style={{ color: appColors.mutedText, opacity: 0.5 }}>
                             /
@@ -381,7 +381,7 @@ const Layout = ({ children, role }) => {
             </div>
           )}
           {/* Page Content */}
-          <main className="flex-1 overflow-y-auto px-3 py-4 sm:px-4 sm:py-5 md:px-6 md:py-6" style={{ backgroundColor: appColors.mainBackground }}>
+          <main className="flex-1 overflow-y-auto px-3 py-4 sm:px-4 sm:py-5 md:px-6 md:py-1" style={{ backgroundColor: appColors.mainBackground }}>
             <div className="mx-auto max-w-7xl">{children}</div>
           </main>
         </div>

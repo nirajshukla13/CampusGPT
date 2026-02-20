@@ -1,8 +1,14 @@
-def build_diagram_prompt(user_query: str) -> str:
+def build_diagram_prompt(user_query: str, chunks: list) -> str:
     """
     Builds a highly strict prompt for Gemini
-    to generate stable structured JSON with valid Mermaid code.
+    to generate stable structured JSON with valid Mermaid code,
+    grounded ONLY in retrieved document chunks.
     """
+
+    context = "\n\n".join(
+        f"[CHUNK {i+1}]\n{chunk.page_content}"
+        for i, chunk in enumerate(chunks)
+    )
 
     return f"""
 You are a strict JSON-only academic diagram generator.
@@ -10,8 +16,16 @@ You are a strict JSON-only academic diagram generator.
 Your response will be parsed automatically by a backend system.
 If you add any extra text outside JSON, the system will fail.
 
-You MUST follow these rules strictly:
+YOU MUST FOLLOW ALL RULES STRICTLY.
 
+GLOBAL CONSTRAINTS:
+- Use ONLY the information present in CONTEXT.
+- Do NOT infer, assume, or add missing steps.
+- Do NOT use external knowledge.
+- If CONTEXT does not contain enough information to draw a diagram,
+  return an empty diagram string and explain the limitation in explanation.
+
+OUTPUT RULES:
 1. Return ONLY valid JSON.
 2. Do NOT include markdown.
 3. Do NOT include ``` blocks.
@@ -23,27 +37,30 @@ You MUST follow these rules strictly:
 REQUIRED OUTPUT FORMAT:
 
 {{
-  "explanation": "3-5 line explanation here.",
+  "explanation": "3–5 line explanation strictly grounded in CONTEXT.",
   "diagram": "Mermaid diagram code here with \\n between lines"
 }}
 
 DIAGRAM RULES:
-
 - Choose appropriate diagram type automatically.
 - Ensure at least 6 nodes when possible.
 - Use simple labels (no special characters).
 - Do NOT use quotes inside node labels.
 - Avoid parentheses unless necessary.
 - Ensure Mermaid syntax is valid.
-- For ER diagrams:
-    • Use erDiagram
-    • Include at least 4 entities
-    • Each entity must have at least 3 attributes
-    • Use proper cardinality symbols (||, }}o, etc.)
+
+ER DIAGRAM RULES (only if applicable):
+- Use erDiagram
+- Include at least 4 entities
+- Each entity must have at least 3 attributes
+- Use proper cardinality symbols (||, }}o, etc.)
+
+CONTEXT (AUTHORITATIVE SOURCE):
+{context}
+
+USER QUESTION:
+\"\"\"{user_query}\"\"\"
 
 IMPORTANT:
 If you output anything outside JSON, the system will crash.
-
-User Query:
-\"\"\"{user_query}\"\"\"
 """

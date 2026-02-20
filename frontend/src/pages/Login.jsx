@@ -50,7 +50,7 @@ export default function Login() {
           email: formData.email,
           password: formData.password
         });
-        
+        console.log(response)
         const { access_token, user } = response.data;
 
         localStorage.setItem('token', access_token);

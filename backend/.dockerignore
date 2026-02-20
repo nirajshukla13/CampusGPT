@@ -1,0 +1,14 @@
+venv/
+.venv/
+__pycache__/
+*.pyc
+.git/
+.gitignore
+vectorstore/
+uploads/
+docs/
+*.pdf
+*.pptx
+*.docx
+node_modules/
+.env

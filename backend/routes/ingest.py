@@ -1,60 +1,46 @@
 from fastapi import APIRouter, UploadFile, File, Depends
-from ingestion.ingest_pdf import ingest_pdf
+from ingestion.ingest_pipeline import ingest_pipeline
+from config import UPLOADS_DIR, VECTOR_DB_DIR
+from utils.imagekit_client import upload_document
 import uuid
-import os
-from datetime import datetime
-from utils.auth import require_role
+from utils import require_role
+
 
 router = APIRouter(prefix="/ingest", tags=["Ingestion"])
 
-UPLOAD_DIR = "uploads"
-
-# In-memory storage for uploaded documents (replace with database in production)
-uploaded_documents = []
-
 @router.post("")
-async def ingest_document(
-    file: UploadFile = File(...),
-    current_user: dict = Depends(require_role(["faculty", "admin"]))
-):
-    """Upload and ingest a document. Only faculty and admin can upload."""
-    os.makedirs(UPLOAD_DIR, exist_ok=True)
-
-    file_id = str(uuid.uuid4())
+async def ingest_document(file: UploadFile = File(...), current_user: dict = Depends(require_role(["student", "faculty", "admin"]))):
+    document_id = str(uuid.uuid4())
     original_filename = file.filename
-    file_path = f"{UPLOAD_DIR}/{file_id}_{original_filename}"
+    print("user", current_user)
 
-    with open(file_path, "wb") as f:
-        f.write(await file.read())
+    file_path = UPLOADS_DIR / f"{document_id}_{original_filename}"
+    print(file_path)
+    try:
+        with open(file_path, "wb") as f:
+            f.write(await file.read())
 
-    ingest_pdf(
-        pdf_path=file_path,
-        persist_directory="vectorstore"
-    )
+        upload_result = upload_document(
+            file_path=file_path,
+            folder="campusgpt/documents"
+        )
 
-    # Store document metadata with actual uploader info
-    document_info = {
-        "document_id": file_id,
-        "document_name": original_filename,
-        "document_url": f"/{file_path}",
-        "uploader": {
-            "id": current_user.get("id", current_user.get("_id")),
-            "name": current_user.get("name"),
-            "email": current_user.get("email")
-        },
-        "uploaded_at": datetime.now().isoformat()
-    }
-    uploaded_documents.append(document_info)
+        # ingest_pipeline(
+        #     doc_path=str(file_path),
+        #     persist_directory=str(VECTOR_DB_DIR),
+        #     document_id=document_id,
+        #     document_name=original_filename,
+        #     document_url=upload_result["url"],         
+        #     uploader=current_user["email"]
+        # )
 
-    return {
-        "message": "Document ingested successfully",
-        **document_info
-    }
+        return {
+            "message": "Document ingested successfully",
+            "document_id": document_id,
+            "document_name": original_filename,
+            "download_url": upload_result["url"]
+        }
 
-@router.get("/documents")
-async def get_uploaded_documents():
-    """Get list of all uploaded documents - accessible to students"""
-    return {
-        "documents": uploaded_documents,
-        "count": len(uploaded_documents)
-    }
+    finally:
+        if file_path.exists():
+            file_path.unlink()
