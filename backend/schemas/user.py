@@ -8,13 +8,14 @@ class UserBase(BaseModel):
     email: EmailStr
     role: str  # student, faculty, admin
 
-class UserCreate(UserBase):
+class UserCreate(BaseModel):
+    name: str
+    email: EmailStr
     password: str
 
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
-    role: str
 
 class User(UserBase):
     model_config = ConfigDict(extra="ignore")

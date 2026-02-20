@@ -9,9 +9,9 @@ from routes import (
     student_router,
     faculty_router,
     admin_router,
-    seed_router,
     query_router,
     ingest_router,
+    events_router
 )
 
 from routes.diagram_routes import router as diagram_router
@@ -40,6 +40,7 @@ app.add_middleware(
     allow_origins=settings.CORS_ORIGINS.split(','),
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 # Event handlers
@@ -58,12 +59,10 @@ app.include_router(auth_router, prefix=settings.API_PREFIX)
 app.include_router(student_router, prefix=settings.API_PREFIX)
 app.include_router(faculty_router, prefix=settings.API_PREFIX)
 app.include_router(admin_router, prefix=settings.API_PREFIX)
-app.include_router(seed_router, prefix=settings.API_PREFIX)
 app.include_router(query_router, prefix=settings.API_PREFIX)
 app.include_router(ingest_router, prefix=settings.API_PREFIX)
+app.include_router(events_router, prefix=settings.API_PREFIX)
 app.include_router(diagram_router, prefix=settings.API_PREFIX + "/diagram")
-
-# Root endpointgit status
 
 @app.get("/")
 async def root():

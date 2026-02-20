@@ -7,6 +7,17 @@ import uuid
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
+def get_role_from_email(email: str) -> str:
+    """Determine role based on email domain."""
+    if email.endswith('@student.com'):
+        return 'student'
+    elif email.endswith('@faculty.com'):
+        return 'faculty'
+    elif email.endswith('@admin.com'):
+        return 'admin'
+    else:
+        raise HTTPException(status_code=400, detail="Invalid email domain. Use @student.com, @faculty.com, or @admin.com")
+
 @router.post("/register", response_model=User)
 async def register(user_data: UserCreate):
     """Register a new user."""
@@ -17,11 +28,14 @@ async def register(user_data: UserCreate):
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     
+    # Determine role from email domain
+    role = get_role_from_email(user_data.email)
+    
     # Create new user
     user = User(
         name=user_data.name,
         email=user_data.email,
-        role=user_data.role
+        role=role
     )
     
     # Prepare user dict for database
@@ -39,9 +53,12 @@ async def login(credentials: UserLogin):
     try:
         db = await get_database()
         
-        # Find user
+        # Verify email domain has valid role
+        expected_role = get_role_from_email(credentials.email)
+        
+        # Find user by email
         user = await db.users.find_one(
-            {"email": credentials.email, "role":credentials.role},
+            {"email": credentials.email},
             {"_id": 0}
         )
         if not user:

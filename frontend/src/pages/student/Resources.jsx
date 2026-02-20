@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../..
 import { Badge } from '../../components/ui/badge';
 import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
+import { appColors } from '../../config/colors.js';
 
 export default function StudentResources() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -139,7 +140,8 @@ export default function StudentResources() {
 
   return (
     <Layout role="student">
-      <div className="space-y-8">
+      <div style={{ backgroundColor: appColors.mainBackground, minHeight: '100vh', padding: '1.5rem' }}>
+        <div className="space-y-8">
         <div className="space-y-1">
           <h1 className="text-2xl font-semibold md:text-3xl">Learning resources</h1>
           <p className="text-sm text-muted-foreground md:text-base">
@@ -149,7 +151,7 @@ export default function StudentResources() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
-          <Card className="border border-border bg-card shadow-md shadow-black/20">
+          <Card className="border border-border shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground }}>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -163,7 +165,7 @@ export default function StudentResources() {
             </CardContent>
           </Card>
 
-          <Card className="border border-border bg-card shadow-md shadow-black/20">
+          <Card className="border border-border shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground }}>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -177,7 +179,7 @@ export default function StudentResources() {
             </CardContent>
           </Card>
 
-          <Card className="border border-border bg-card shadow-md shadow-black/20">
+          <Card className="border border-border shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground }}>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -191,7 +193,7 @@ export default function StudentResources() {
             </CardContent>
           </Card>
 
-          <Card className="border border-border bg-card shadow-md shadow-black/20">
+          <Card className="border border-border shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground }}>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -207,7 +209,7 @@ export default function StudentResources() {
         </div>
 
         {/* Search Bar */}
-        <Card className="mb-4 border border-border bg-card shadow-md shadow-black/20">
+        <Card className="mb-4 border border-border shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground }}>
           <CardContent className="p-6">
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -223,7 +225,7 @@ export default function StudentResources() {
         </Card>
 
         {/* Type Filter */}
-        <Card className="mb-6 border border-border bg-card shadow-md shadow-black/20">
+        <Card className="mb-6 border border-border shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground }}>
           <CardContent className="p-6">
             <div className="flex items-center gap-3 overflow-x-auto">
               <Filter className="h-4 w-4 text-muted-foreground" />
@@ -253,7 +255,8 @@ export default function StudentResources() {
             return (
               <Card
                 key={resource.id}
-                className="border border-border bg-card shadow-md shadow-black/20"
+                className="border border-border shadow-md shadow-black/20"
+                style={{ backgroundColor: appColors.sidebarBackground }}
               >
                 <CardHeader>
                   <div className="flex items-start gap-4">
@@ -331,7 +334,7 @@ export default function StudentResources() {
         </div>
 
         {filteredResources.length === 0 && (
-          <Card className="border border-border bg-card shadow-md shadow-black/20">
+          <Card className="border border-border shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground }}>
             <div className="p-10 text-center">
               <BookOpen className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
               <p className="mb-1 text-sm font-semibold text-foreground">No resources found</p>
@@ -339,6 +342,7 @@ export default function StudentResources() {
             </div>
           </Card>
         )}
+      </div>
       </div>
     </Layout>
   );

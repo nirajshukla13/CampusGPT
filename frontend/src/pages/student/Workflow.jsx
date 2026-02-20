@@ -1,5 +1,6 @@
 import React from 'react';
 import Layout from '../../components/Layout';
+import { appColors } from '../../config/colors.js';
 import { ShieldCheck, Search, Sparkles, Database, Workflow as WorkflowIcon, MessageCircle, BookOpen } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/card';
 
@@ -44,7 +45,7 @@ const steps = [
 export default function Workflow() {
   return (
     <Layout role="student">
-      <div className="space-y-8">
+      <div className="space-y-8" style={{ backgroundColor: appColors.mainBackground, minHeight: '100vh', padding: '1.5rem' }}>
         <div className="space-y-1">
           <h1 className="text-2xl font-semibold md:text-3xl">CampusGPT workflow</h1>
           <p className="text-sm text-[#9CA3AF] md:text-base">
@@ -61,7 +62,8 @@ export default function Workflow() {
               return (
                 <Card
                   key={step.title}
-                  className="relative flex items-center gap-4 rounded-xl border border-[#1F2937] bg-[#111827] px-4 py-4 shadow-md shadow-black/20 transition-transform duration-150 hover:scale-[1.02]"
+                  className="relative flex items-center gap-4 rounded-xl border px-4 py-4 shadow-md shadow-black/20 transition-transform duration-150 hover:scale-[1.02]"
+                  style={{ backgroundColor: appColors.sidebarBackground, borderColor: appColors.cardBorder }}
                 >
                   <div className="absolute left-[-1.25rem] flex h-full items-center md:left-[-1.5rem]">
                     <div className="h-10 w-10 rounded-full border border-[#1F2937] bg-[#020617] text-[#F9FAFB]">

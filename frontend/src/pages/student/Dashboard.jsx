@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Layout from '../../components/Layout';
 import { studentAPI } from '../../services/api';
+import { appColors } from '../../config/colors.js';
 import {
-  Search,
   Clock,
   MessageSquare,
   TrendingUp,
@@ -13,19 +12,15 @@ import {
   Bookmark,
   History,
   Sparkles,
-  Zap,
   Target,
   ArrowRight,
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
-import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
 
 export default function StudentDashboard() {
-  const navigate = useNavigate();
   const [dashboardData, setDashboardData] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     fetchDashboard();
@@ -67,13 +62,6 @@ export default function StudentDashboard() {
     },
   ];
 
-  const quickActions = [
-    { icon: Search, label: 'New Query', link: '/student/chat' },
-    { icon: History, label: 'History', link: '/student/history' },
-    { icon: BookOpen, label: 'Resources', link: '/student/resources' },
-    { icon: Calendar, label: 'Events', link: '/student/events' },
-  ];
-
   const trendingTopics = [
     { topic: 'Library Hours', queries: 45, icon: BookOpen },
     { topic: 'Exam Schedule', queries: 38, icon: Calendar },
@@ -81,22 +69,9 @@ export default function StudentDashboard() {
     { topic: 'Campus Events', queries: 28, icon: Sparkles }
   ];
 
-  const suggestions = ['Library hours', 'Course schedule', 'Campus map', 'Dining options'];
-
   return (
     <Layout role="student">
-      <div className="space-y-8">
-        {/* Header Section */}
-        <div className="flex items-start justify-between gap-4">
-          <div className="space-y-1">
-            <h1 className="text-2xl font-semibold md:text-3xl">Student dashboard</h1>
-            <p className="text-sm text-muted-foreground md:text-base">
-              Track your CampusGPT usage and jump back into your work.
-            </p>
-          </div>
-          <div className="hidden h-6 w-24 md:block" />
-        </div>
-
+      <div className="space-y-8" style={{ backgroundColor: appColors.mainBackground, padding: '1.5rem' }}>
         {/* Stats Grid */}
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
           {stats.map((stat) => {
@@ -104,7 +79,8 @@ export default function StudentDashboard() {
             return (
               <Card
                 key={stat.label}
-                className="bg-card border border-border rounded-xl shadow-md shadow-black/20"
+                className="border border-border rounded-xl shadow-md shadow-black/20"
+                style={{ backgroundColor: appColors.sidebarBackground }}
               >
                 <CardContent className="p-6">
                   <div className="mb-4 flex items-center justify-between gap-3">
@@ -125,105 +101,10 @@ export default function StudentDashboard() {
           })}
         </div>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          {/* Ask CampusGPT */}
-          <div className="lg:col-span-2">
-            <Card className="h-full bg-card border border-border rounded-xl shadow-md shadow-black/20">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg font-semibold text-foreground">
-                  <Sparkles className="h-5 w-5 text-primary" />
-                  Ask CampusGPT
-                </CardTitle>
-                <CardDescription className="text-sm text-muted-foreground">
-                  Get instant answers about campus life, courses, and more.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="relative">
-                    <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input
-                      type="text"
-                      data-testid="campus-gpt-search-input"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Ask anything about your campus..."
-                      className="h-11 w-full rounded-xl border-border bg-surface-2 pl-9 text-sm text-foreground placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary"
-                    />
-                  </div>
-                  <Button
-                    type="button"
-                    data-testid="search-button"
-                    className="h-10 w-full rounded-xl bg-primary text-sm font-medium text-primary-foreground hover:bg-primary/90"
-                  >
-                    <Zap className="mr-2 h-4 w-4" />
-                    Get answer
-                    <ArrowRight className="ml-1 h-4 w-4" />
-                  </Button>
-                </div>
-
-                {/* Suggested Queries */}
-                <div className="pt-2">
-                  <p className="mb-2 flex items-center gap-2 text-xs font-medium text-[#9CA3AF]">
-                    <Sparkles className="h-3 w-3 text-[#22D3EE]" />
-                    Try asking:
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {suggestions.map((suggestion) => (
-                      <Badge
-                        key={suggestion}
-                        type="button"
-                        asChild={false}
-                        className="cursor-pointer rounded-full border-0 bg-[#1F2937] px-3 py-1 text-xs font-normal text-[#E5E7EB] hover:bg-[#111827]"
-                        onClick={() => setSearchQuery(suggestion)}
-                      >
-                        {suggestion}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Quick Actions */}
-          <div>
-            <Card className="bg-card border border-border rounded-xl shadow-md shadow-black/20">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base font-semibold text-foreground">
-                  <Zap className="h-4 w-4 text-primary" />
-                  Quick actions
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {quickActions.map((action) => {
-                  const Icon = action.icon;
-                  return (
-                    <Button
-                      key={action.label}
-                      type="button"
-                      variant="ghost"
-                      onClick={() => navigate(action.link)}
-                      className="flex w-full items-center justify-start gap-3 rounded-xl border border-border bg-surface-2 px-3 py-3 text-sm font-medium text-foreground hover:bg-surface"
-                    >
-                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-card text-foreground">
-                        <Icon className="h-4 w-4" />
-                      </div>
-                      <span>{action.label}</span>
-                      <ArrowRight className="ml-auto h-3 w-3 text-muted-foreground" />
-                    </Button>
-                  );
-                })}
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-
         {/* Bottom Grid */}
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           {/* Recent Queries */}
-          <Card className="bg-card border border-border rounded-xl shadow-md shadow-black/20">
+          <Card className="border border-border rounded-xl shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground }}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base font-semibold text-foreground">
                 <Clock className="h-4 w-4 text-primary" />
@@ -244,7 +125,7 @@ export default function StudentDashboard() {
                       data-testid={`recent-query-${query.id}`}
                       className="flex w-full items-start justify-start gap-3 rounded-xl border border-border bg-surface-2 px-4 py-3 text-left text-sm font-normal text-foreground hover:bg-surface"
                     >
-                      <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-card">
+                      <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg" style={{ backgroundColor: appColors.sidebarBackground }}>
                         <MessageSquare className="h-4 w-4 text-primary" />
                       </div>
                       <div className="min-w-0 flex-1">
@@ -268,7 +149,7 @@ export default function StudentDashboard() {
           </Card>
 
           {/* Trending Topics */}
-          <Card className="bg-card border border-border rounded-xl shadow-md shadow-black/20">
+          <Card className="border border-border rounded-xl shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground }}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base font-semibold text-foreground">
                 <TrendingUp className="h-4 w-4 text-primary" />
@@ -288,7 +169,7 @@ export default function StudentDashboard() {
                       className="flex items-center justify-between rounded-xl border border-border bg-surface-2 px-4 py-3 text-sm text-foreground"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-card">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ backgroundColor: appColors.sidebarBackground }}>
                           <Icon className="h-4 w-4 text-foreground" />
                         </div>
                         <div>

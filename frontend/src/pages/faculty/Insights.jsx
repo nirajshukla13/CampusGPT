@@ -1,21 +1,22 @@
 import React from 'react';
 import Layout from '../../components/Layout';
 import { BarChart3, TrendingUp, Users, Eye } from 'lucide-react';
+import { appColors } from '../../config/colors.js';
 
 export default function FacultyInsights() {
   return (
     <Layout role="faculty">
-      <div className="space-y-8">
+      <div className="space-y-8" style={{ backgroundColor: appColors.mainBackground, minHeight: '100vh', padding: '1.5rem' }}>
         <div className="space-y-1">
-          <h1 className="text-2xl font-semibold md:text-3xl">Insights &amp; analytics</h1>
-          <p className="text-sm text-[#9CA3AF] md:text-base">
+          <h1 className="text-2xl font-semibold md:text-3xl" style={{ color: appColors.primaryText }}>Insights &amp; analytics</h1>
+          <p className="text-sm md:text-base" style={{ color: appColors.mutedText }}>
             Monitor student engagement and how your content performs.
           </p>
         </div>
 
         {/* Metrics Grid */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-xl border border-[#1F2937] bg-[#111827] p-6 shadow-md shadow-black/20">
+          <div className="rounded-xl border p-6 shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground, borderColor: appColors.cardBorder }}>
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-sm font-medium text-[#9CA3AF]">Total views</h3>
               <Eye size={18} className="text-[#6366F1]" />
@@ -24,7 +25,7 @@ export default function FacultyInsights() {
             <p className="text-xs text-[#10B981]">+12% from last week</p>
           </div>
 
-          <div className="rounded-xl border border-[#1F2937] bg-[#111827] p-6 shadow-md shadow-black/20">
+          <div className="rounded-xl border p-6 shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground, borderColor: appColors.cardBorder }}>
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-sm font-medium text-[#9CA3AF]">Active students</h3>
               <Users size={18} className="text-[#22D3EE]" />
@@ -33,7 +34,7 @@ export default function FacultyInsights() {
             <p className="text-xs text-[#10B981]">+8% from last week</p>
           </div>
 
-          <div className="rounded-xl border border-[#1F2937] bg-[#111827] p-6 shadow-md shadow-black/20">
+          <div className="rounded-xl border p-6 shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground, borderColor: appColors.cardBorder }}>
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-sm font-medium text-[#9CA3AF]">Engagement</h3>
               <TrendingUp size={18} className="text-[#10B981]" />
@@ -42,7 +43,7 @@ export default function FacultyInsights() {
             <p className="text-xs text-[#10B981]">+5% from last week</p>
           </div>
 
-          <div className="rounded-xl border border-[#1F2937] bg-[#111827] p-6 shadow-md shadow-black/20">
+          <div className="rounded-xl border p-6 shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground, borderColor: appColors.cardBorder }}>
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-sm font-medium text-[#9CA3AF]">Queries</h3>
               <BarChart3 size={18} className="text-[#F59E0B]" />
@@ -53,7 +54,7 @@ export default function FacultyInsights() {
         </div>
 
         {/* Charts Placeholder */}
-        <div className="rounded-xl border border-[#1F2937] bg-[#111827] p-6 shadow-md shadow-black/20">
+        <div className="rounded-xl border p-6 shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground, borderColor: appColors.cardBorder }}>
           <h2 className="mb-4 text-base font-semibold text-[#F9FAFB]">Usage trends</h2>
           <div className="flex h-64 items-center justify-center rounded-xl border border-dashed border-[#1F2937] bg-[#020617]">
             <p className="text-sm text-[#6B7280]">
@@ -63,7 +64,7 @@ export default function FacultyInsights() {
         </div>
 
         {/* Popular Topics */}
-        <div className="rounded-xl border border-[#1F2937] bg-[#111827] p-6 shadow-md shadow-black/20">
+        <div className="rounded-xl border p-6 shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground, borderColor: appColors.cardBorder }}>
           <h2 className="mb-4 text-base font-semibold text-[#F9FAFB]">Most asked topics</h2>
           <div className="space-y-3 text-sm">
             {[

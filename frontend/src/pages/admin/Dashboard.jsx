@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Layout from '../../components/Layout';
 import { adminAPI } from '../../services/api';
 import { Users, GraduationCap, UserCheck, Shield } from 'lucide-react';
+import { appColors } from '../../config/colors.js';
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
@@ -21,80 +22,78 @@ export default function AdminDashboard() {
 
   return (
     <Layout role="admin">
-      <div className="space-y-8">
+      <div className="space-y-8" style={{ backgroundColor: appColors.mainBackground, minHeight: '100vh', padding: '1.5rem' }}>
         <div className="space-y-1">
-          <h1 className="text-2xl font-semibold md:text-3xl">Admin dashboard</h1>
-          <p className="text-sm text-[#9CA3AF] md:text-base">
+          <h1 className="text-2xl font-semibold md:text-3xl" style={{ color: appColors.primaryText }}>Admin dashboard</h1>
+          <p className="text-sm md:text-base" style={{ color: appColors.mutedText }}>
             Monitor and manage your CampusGPT system.
           </p>
         </div>
 
-        {/* Stats Cards */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-xl border border-[#1F2937] bg-[#111827] p-6 shadow-md shadow-black/20">
+          <div className="rounded-xl border p-6 shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground, borderColor: appColors.cardBorder }}>
             <div className="mb-4 flex items-center justify-between">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#1F2937] text-[#F9FAFB]">
-                <Users size={20} />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ backgroundColor: appColors.cardBorder }}>
+                <Users size={20} style={{ color: appColors.primaryText }} />
               </div>
             </div>
-            <h3 className="mb-1 text-sm font-medium text-[#9CA3AF]">Total users</h3>
-            <p data-testid="total-users" className="text-2xl font-semibold text-[#F9FAFB]">
+            <h3 className="mb-1 text-sm font-medium" style={{ color: appColors.mutedText }}>Total users</h3>
+            <p data-testid="total-users" className="text-2xl font-semibold" style={{ color: appColors.primaryText }}>
               {stats?.total_users || 0}
             </p>
           </div>
 
-          <div className="rounded-xl border border-[#1F2937] bg-[#111827] p-6 shadow-md shadow-black/20">
+          <div className="rounded-xl border p-6 shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground, borderColor: appColors.cardBorder }}>
             <div className="mb-4 flex items-center justify-between">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#1F2937] text-[#F9FAFB]">
-                <GraduationCap size={20} />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ backgroundColor: appColors.cardBorder }}>
+                <GraduationCap size={20} style={{ color: appColors.primaryText }} />
               </div>
             </div>
-            <h3 className="mb-1 text-sm font-medium text-[#9CA3AF]">Students</h3>
-            <p data-testid="students-count" className="text-2xl font-semibold text-[#F9FAFB]">
+            <h3 className="mb-1 text-sm font-medium" style={{ color: appColors.mutedText }}>Students</h3>
+            <p data-testid="students-count" className="text-2xl font-semibold" style={{ color: appColors.primaryText }}>
               {stats?.students || 0}
             </p>
           </div>
 
-          <div className="rounded-xl border border-[#1F2937] bg-[#111827] p-6 shadow-md shadow-black/20">
+          <div className="rounded-xl border p-6 shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground, borderColor: appColors.cardBorder }}>
             <div className="mb-4 flex items-center justify-between">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#1F2937] text-[#F9FAFB]">
-                <UserCheck size={20} />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ backgroundColor: appColors.cardBorder }}>
+                <UserCheck size={20} style={{ color: appColors.primaryText }} />
               </div>
             </div>
-            <h3 className="mb-1 text-sm font-medium text-[#9CA3AF]">Faculty</h3>
-            <p data-testid="faculty-count" className="text-2xl font-semibold text-[#F9FAFB]">
+            <h3 className="mb-1 text-sm font-medium" style={{ color: appColors.mutedText }}>Faculty</h3>
+            <p data-testid="faculty-count" className="text-2xl font-semibold" style={{ color: appColors.primaryText }}>
               {stats?.faculty || 0}
             </p>
           </div>
 
-          <div className="rounded-xl border border-[#1F2937] bg-[#111827] p-6 shadow-md shadow-black/20">
+          <div className="rounded-xl border p-6 shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground, borderColor: appColors.cardBorder }}>
             <div className="mb-4 flex items-center justify-between">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#1F2937] text-[#F9FAFB]">
-                <Shield size={20} />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ backgroundColor: appColors.cardBorder }}>
+                <Shield size={20} style={{ color: appColors.primaryText }} />
               </div>
             </div>
-            <h3 className="mb-1 text-sm font-medium text-[#9CA3AF]">Admins</h3>
-            <p data-testid="admin-count" className="text-2xl font-semibold text-[#F9FAFB]">
+            <h3 className="mb-1 text-sm font-medium" style={{ color: appColors.mutedText }}>Admins</h3>
+            <p data-testid="admin-count" className="text-2xl font-semibold" style={{ color: appColors.primaryText }}>
               {stats?.admin || 0}
             </p>
           </div>
         </div>
 
-        {/* System Stats */}
-        <div className="rounded-xl border border-[#1F2937] bg-[#111827] p-6 shadow-md shadow-black/20">
-          <h2 className="mb-4 text-base font-semibold text-[#F9FAFB]">System statistics</h2>
+        <div className="rounded-xl border p-6 shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground, borderColor: appColors.cardBorder }}>
+          <h2 className="mb-4 text-base font-semibold" style={{ color: appColors.primaryText }}>System statistics</h2>
           <div className="space-y-3 text-sm">
-            <div className="flex items-center justify-between rounded-xl border border-[#1F2937] bg-[#020617] px-4 py-3">
-              <span className="text-[#E5E7EB]">Total queries processed</span>
-              <span className="font-semibold text-[#F9FAFB]">1,234</span>
+            <div className="flex items-center justify-between rounded-xl border px-4 py-3" style={{ backgroundColor: appColors.inputBackground, borderColor: appColors.cardBorder }}>
+              <span style={{ color: appColors.secondaryText }}>Total queries processed</span>
+              <span className="font-semibold" style={{ color: appColors.primaryText }}>1,234</span>
             </div>
-            <div className="flex items-center justify-between rounded-xl border border-[#1F2937] bg-[#020617] px-4 py-3">
-              <span className="text-[#E5E7EB]">Active sessions</span>
-              <span className="font-semibold text-[#F9FAFB]">87</span>
+            <div className="flex items-center justify-between rounded-xl border px-4 py-3" style={{ backgroundColor: appColors.inputBackground, borderColor: appColors.cardBorder }}>
+              <span style={{ color: appColors.secondaryText }}>Active sessions</span>
+              <span className="font-semibold" style={{ color: appColors.primaryText }}>87</span>
             </div>
-            <div className="flex items-center justify-between rounded-xl border border-[#1F2937] bg-[#020617] px-4 py-3">
-              <span className="text-[#E5E7EB]">System uptime</span>
-              <span className="font-semibold text-[#10B981]">99.9%</span>
+            <div className="flex items-center justify-between rounded-xl border px-4 py-3" style={{ backgroundColor: appColors.inputBackground, borderColor: appColors.cardBorder }}>
+              <span style={{ color: appColors.secondaryText }}>System uptime</span>
+              <span className="font-semibold" style={{ color: appColors.success }}>99.9%</span>
             </div>
           </div>
         </div>

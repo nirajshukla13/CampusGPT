@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Layout from '../../components/Layout';
 import { facultyAPI } from '../../services/api';
 import { FileText, Users, TrendingUp } from 'lucide-react';
+import { appColors } from '../../config/colors.js';
 
 export default function FacultyDashboard() {
   const [dashboardData, setDashboardData] = useState(null);
@@ -21,72 +22,72 @@ export default function FacultyDashboard() {
 
   return (
     <Layout role="faculty">
-      <div className="space-y-8">
+      <div className="space-y-8" style={{ backgroundColor: appColors.mainBackground, minHeight: '100vh', padding: '1.5rem' }}>
         <div className="space-y-1">
-          <h1 className="text-2xl font-semibold md:text-3xl">Faculty dashboard</h1>
-          <p className="text-sm text-[#9CA3AF] md:text-base">
+          <h1 className="text-2xl font-semibold md:text-3xl" style={{ color: appColors.primaryText }}>Faculty dashboard</h1>
+          <p className="text-sm md:text-base" style={{ color: appColors.mutedText }}>
             Monitor content performance and student engagement.
           </p>
         </div>
 
-        {/* Stats Cards */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          <div className="rounded-xl border border-[#1F2937] bg-[#111827] p-6 shadow-md shadow-black/20">
+          <div className="rounded-xl border p-6 shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground, borderColor: appColors.cardBorder }}>
             <div className="mb-4 flex items-center justify-between">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#1F2937] text-[#F9FAFB]">
-                <FileText size={20} />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ backgroundColor: appColors.cardBorder }}>
+                <FileText size={20} style={{ color: appColors.primaryText }} />
               </div>
             </div>
-            <h3 className="mb-1 text-sm font-medium text-[#9CA3AF]">Uploaded content</h3>
+            <h3 className="mb-1 text-sm font-medium" style={{ color: appColors.mutedText }}>Uploaded content</h3>
             <p
               data-testid="uploaded-content-count"
-              className="text-2xl font-semibold text-[#F9FAFB]"
+              className="text-2xl font-semibold"
+              style={{ color: appColors.primaryText }}
             >
               {dashboardData?.uploaded_content || 0}
             </p>
           </div>
 
-          <div className="rounded-xl border border-[#1F2937] bg-[#111827] p-6 shadow-md shadow-black/20">
+          <div className="rounded-xl border p-6 shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground, borderColor: appColors.cardBorder }}>
             <div className="mb-4 flex items-center justify-between">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#1F2937] text-[#F9FAFB]">
-                <Users size={20} />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ backgroundColor: appColors.cardBorder }}>
+                <Users size={20} style={{ color: appColors.primaryText }} />
               </div>
             </div>
-            <h3 className="mb-1 text-sm font-medium text-[#9CA3AF]">Student queries</h3>
+            <h3 className="mb-1 text-sm font-medium" style={{ color: appColors.mutedText }}>Student queries</h3>
             <p
               data-testid="student-queries-count"
-              className="text-2xl font-semibold text-[#F9FAFB]"
+              className="text-2xl font-semibold"
+              style={{ color: appColors.primaryText }}
             >
               {dashboardData?.student_queries || 0}
             </p>
           </div>
 
-          <div className="rounded-xl border border-[#1F2937] bg-[#111827] p-6 shadow-md shadow-black/20">
+          <div className="rounded-xl border p-6 shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground, borderColor: appColors.cardBorder }}>
             <div className="mb-4 flex items-center justify-between">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#1F2937] text-[#F9FAFB]">
-                <TrendingUp size={20} />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ backgroundColor: appColors.cardBorder }}>
+                <TrendingUp size={20} style={{ color: appColors.primaryText }} />
               </div>
             </div>
-            <h3 className="mb-1 text-sm font-medium text-[#9CA3AF]">Engagement</h3>
-            <p data-testid="engagement-rate" className="text-2xl font-semibold text-[#F9FAFB]">
+            <h3 className="mb-1 text-sm font-medium" style={{ color: appColors.mutedText }}>Engagement</h3>
+            <p data-testid="engagement-rate" className="text-2xl font-semibold" style={{ color: appColors.primaryText }}>
               {dashboardData?.analytics?.engagement || '0%'}
             </p>
           </div>
         </div>
 
-        {/* Analytics Card */}
-        <div className="rounded-xl border border-[#1F2937] bg-[#111827] p-6 shadow-md shadow-black/20">
-          <h2 className="mb-4 text-base font-semibold text-[#F9FAFB]">Analytics overview</h2>
+        <div className="rounded-xl border p-6 shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground, borderColor: appColors.cardBorder }}>
+          <h2 className="mb-4 text-base font-semibold" style={{ color: appColors.primaryText }}>Analytics overview</h2>
           <div className="space-y-3 text-sm">
-            <div className="flex items-center justify-between rounded-xl border border-[#1F2937] bg-[#020617] px-4 py-3">
-              <span className="text-[#E5E7EB]">Total views</span>
-              <span className="font-semibold text-[#F9FAFB]">
+            <div className="flex items-center justify-between rounded-xl border px-4 py-3" style={{ backgroundColor: appColors.inputBackground, borderColor: appColors.cardBorder }}>
+              <span style={{ color: appColors.secondaryText }}>Total views</span>
+              <span className="font-semibold" style={{ color: appColors.primaryText }}>
                 {dashboardData?.analytics?.views || 0}
               </span>
             </div>
-            <div className="flex items-center justify-between rounded-xl border border-[#1F2937] bg-[#020617] px-4 py-3">
-              <span className="text-[#E5E7EB]">Engagement rate</span>
-              <span className="font-semibold text-[#F9FAFB]">
+            <div className="flex items-center justify-between rounded-xl border px-4 py-3" style={{ backgroundColor: appColors.inputBackground, borderColor: appColors.cardBorder }}>
+              <span style={{ color: appColors.secondaryText }}>Engagement rate</span>
+              <span className="font-semibold" style={{ color: appColors.primaryText }}>
                 {dashboardData?.analytics?.engagement || '0%'}
               </span>
             </div>

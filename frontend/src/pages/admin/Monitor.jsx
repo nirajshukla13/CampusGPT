@@ -2,21 +2,22 @@ import React from 'react';
 import Layout from '../../components/Layout';
 import { Activity, Server, Database, Cpu } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { appColors } from '../../config/colors.js';
 
 export default function AdminMonitor() {
   return (
     <Layout role="admin">
-      <div className="space-y-8">
+      <div className="space-y-8" style={{ backgroundColor: appColors.mainBackground, minHeight: '100vh', padding: '1.5rem' }}>
         <div className="space-y-1">
-          <h1 className="text-2xl font-semibold md:text-3xl">System monitor</h1>
-          <p className="text-sm text-[#9CA3AF] md:text-base">
+          <h1 className="text-2xl font-semibold md:text-3xl" style={{ color: appColors.primaryText }}>System monitor</h1>
+          <p className="text-sm md:text-base" style={{ color: appColors.mutedText }}>
             Real-time system health and performance metrics.
           </p>
         </div>
 
         {/* System Health */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <Card className="border border-[#1F2937] bg-[#111827] shadow-md shadow-black/20">
+          <Card className="border shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground, borderColor: appColors.cardBorder }}>
             <CardHeader className="pb-3">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#1F2937] text-[#F9FAFB]">
@@ -39,7 +40,7 @@ export default function AdminMonitor() {
             </CardContent>
           </Card>
 
-          <Card className="border border-[#1F2937] bg-[#111827] shadow-md shadow-black/20">
+          <Card className="border shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground, borderColor: appColors.cardBorder }}>
             <CardHeader className="pb-3">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#1F2937] text-[#F9FAFB]">
@@ -62,7 +63,7 @@ export default function AdminMonitor() {
         </div>
 
         {/* Performance Metrics */}
-        <Card className="border border-[#1F2937] bg-[#111827] shadow-md shadow-black/20">
+        <Card className="border shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground, borderColor: appColors.cardBorder }}>
           <CardHeader>
             <CardTitle className="text-base font-semibold text-[#F9FAFB]">
               Performance metrics
@@ -125,7 +126,7 @@ export default function AdminMonitor() {
         </Card>
 
         {/* Activity Log */}
-        <Card className="border border-[#1F2937] bg-[#111827] shadow-md shadow-black/20">
+        <Card className="border shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground, borderColor: appColors.cardBorder }}>
           <CardHeader>
             <CardTitle className="text-base font-semibold text-[#F9FAFB]">
               Recent activity

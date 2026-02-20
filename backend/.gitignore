@@ -19,7 +19,7 @@ node_modules/
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
-
+requirements.dev.txt
 # Testing
 /coverage
 

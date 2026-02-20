@@ -10,7 +10,7 @@ body {
         sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #0B0B0C;
+    background-color: #070708;
 }
 
 code {
@@ -21,7 +21,7 @@ code {
 @layer base {
     :root {
         /* CampusGPT black + orange dark theme */
-        --background: 240 5% 3%; /* #0B0B0C */
+        --background: 240 5% 2%; /* #070708 */
         --surface: 240 5% 7%; /* #121214 */
         --surface-2: 240 5% 9%; /* #17171A */
         --elevated: 240 5% 11%; /* #1C1C21 */
@@ -30,7 +30,7 @@ code {
         --muted: 240 5% 66%; /* #A1A1AA */
         --muted-foreground: 240 5% 44%; /* #71717A */
 
-        --card: 240 5% 7%; /* use surface as card */
+        --card: 240 3% 10%; /* #191a1a - sidebarBackground */
         --card-foreground: 240 5% 96%;
         --popover: 240 5% 7%;
         --popover-foreground: 240 5% 96%;
@@ -60,7 +60,7 @@ code {
     }
     .dark {
         /* Mirror root so dark is the default visual mode */
-        --background: 240 5% 3%;
+        --background: 240 5% 2%;
         --surface: 240 5% 7%;
         --surface-2: 240 5% 9%;
         --elevated: 240 5% 11%;
@@ -69,7 +69,7 @@ code {
         --muted: 240 5% 66%;
         --muted-foreground: 240 5% 44%;
 
-        --card: 240 5% 7%;
+        --card: 240 3% 10%;
         --card-foreground: 240 5% 96%;
         --popover: 240 5% 7%;
         --popover-foreground: 240 5% 96%;

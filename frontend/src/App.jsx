@@ -15,101 +15,33 @@ import FacultyInsights from './pages/faculty/Insights.jsx';
 import AdminDashboard from './pages/admin/Dashboard.jsx';
 import AdminUsers from './pages/admin/Users.jsx';
 import AdminMonitor from './pages/admin/Monitor.jsx';
-import ProtectedRoute from './components/ProtectedRoute.jsx';
 import './App.css';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/" element={<Navigate to="/student/dashboard" replace />} />
         <Route path="/login" element={<Login />} />
-        
-        {/* Student Routes */}
-        <Route path="/student/dashboard" element={
-          <ProtectedRoute allowedRoles={['student']}>
-            <StudentDashboard />
-          </ProtectedRoute>
-        } />
-        <Route path="/student/chat/:sessionId?" element={
-          <ProtectedRoute allowedRoles={['student']}>
-            <StudentChat />
-          </ProtectedRoute>
-        } />
-        <Route path="/student/history" element={
-          <ProtectedRoute allowedRoles={['student']}>
-            <StudentHistory />
-          </ProtectedRoute>
-        } />
-        <Route path="/student/events" element={
-          <ProtectedRoute allowedRoles={['student']}>
-            <StudentEvents />
-          </ProtectedRoute>
-        } />
-        <Route path="/student/resources" element={
-          <ProtectedRoute allowedRoles={['student']}>
-            <StudentResources />
-          </ProtectedRoute>
-        } />
-        <Route path="/student/architecture" element={
-          <ProtectedRoute allowedRoles={['student']}>
-            <Architecture />
-          </ProtectedRoute>
-        } />
-        <Route path="/student/workflow" element={
-          <ProtectedRoute allowedRoles={['student']}>
-            <Workflow />
-          </ProtectedRoute>
-        } />
-        <Route path="/student/profile" element={
-          <ProtectedRoute allowedRoles={['student']}>
-            <Profile />
-          </ProtectedRoute>
-        } />
-        
-        {/* Faculty Routes */}
-        <Route path="/faculty/dashboard" element={
-          <ProtectedRoute allowedRoles={['faculty']}>
-            <FacultyDashboard />
-          </ProtectedRoute>
-        } />
-        <Route path="/faculty/upload" element={
-          <ProtectedRoute allowedRoles={['faculty']}>
-            <FacultyUpload />
-          </ProtectedRoute>
-        } />
-        <Route path="/faculty/insights" element={
-          <ProtectedRoute allowedRoles={['faculty']}>
-            <FacultyInsights />
-          </ProtectedRoute>
-        } />
-        <Route path="/faculty/profile" element={
-          <ProtectedRoute allowedRoles={['faculty']}>
-            <Profile />
-          </ProtectedRoute>
-        } />
-        
-        {/* Admin Routes */}
-        <Route path="/admin/dashboard" element={
-          <ProtectedRoute allowedRoles={['admin']}>
-            <AdminDashboard />
-          </ProtectedRoute>
-        } />
-        <Route path="/admin/users" element={
-          <ProtectedRoute allowedRoles={['admin']}>
-            <AdminUsers />
-          </ProtectedRoute>
-        } />
-        <Route path="/admin/monitor" element={
-          <ProtectedRoute allowedRoles={['admin']}>
-            <AdminMonitor />
-          </ProtectedRoute>
-        } />
-        <Route path="/admin/profile" element={
-          <ProtectedRoute allowedRoles={['admin']}>
-            <Profile />
-          </ProtectedRoute>
-        } />
+
+        <Route path="/student/dashboard" element={<StudentDashboard />} />
+        <Route path="/student/chat" element={<StudentChat />} />
+        <Route path="/student/history" element={<StudentHistory />} />
+        <Route path="/student/events" element={<StudentEvents />} />
+        <Route path="/student/resources" element={<StudentResources />} />
+        <Route path="/student/architecture" element={<Architecture />} />
+        <Route path="/student/workflow" element={<Workflow />} />
+        <Route path="/student/profile" element={<Profile />} />
+
+        <Route path="/faculty/dashboard" element={<FacultyDashboard />} />
+        <Route path="/faculty/upload" element={<FacultyUpload />} />
+        <Route path="/faculty/insights" element={<FacultyInsights />} />
+        <Route path="/faculty/profile" element={<Profile />} />
+
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/users" element={<AdminUsers />} />
+        <Route path="/admin/monitor" element={<AdminMonitor />} />
+        <Route path="/admin/profile" element={<Profile />} />
       </Routes>
     </BrowserRouter>
   );

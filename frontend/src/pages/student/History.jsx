@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/ca
 import { Badge } from '../../components/ui/badge';
 import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
+import { appColors } from '../../config/colors.js';
 
 export default function StudentHistory() {
   const [history, setHistory] = useState([]);
@@ -31,7 +32,7 @@ export default function StudentHistory() {
 
   return (
     <Layout role="student">
-      <div className="space-y-8">
+      <div className="space-y-8" style={{ backgroundColor: appColors.mainBackground, minHeight: '100vh', padding: '1.5rem' }}>
         <div className="space-y-1">
           <h1 className="text-2xl font-semibold md:text-3xl">Query history</h1>
           <p className="text-sm text-muted-foreground md:text-base">
@@ -39,7 +40,7 @@ export default function StudentHistory() {
           </p>
         </div>
 
-        <Card className="mb-4 border border-border bg-card shadow-md shadow-black/20">
+        <Card className="mb-4 border border-border shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground }}>
           <CardContent className="p-6">
             <div className="flex gap-4">
               <div className="relative flex-1">
@@ -65,7 +66,7 @@ export default function StudentHistory() {
         </Card>
 
         {filteredHistory.length === 0 ? (
-          <Card className="border border-border bg-card shadow-md shadow-black/20">
+          <Card className="border border-border shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground }}>
             <div className="p-10 text-center">
               <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-2">
                 <Clock size={32} className="text-muted-foreground" />
@@ -82,7 +83,8 @@ export default function StudentHistory() {
               <Card
                 key={item.id}
                 data-testid={`history-item-${item.id}`}
-                className="border border-border bg-card shadow-md shadow-black/20"
+                className="border border-border shadow-md shadow-black/20"
+                style={{ backgroundColor: appColors.sidebarBackground }}
               >
                 <CardHeader>
                   <div className="flex items-start justify-between gap-4">

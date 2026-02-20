@@ -1,5 +1,6 @@
 import React from 'react';
 import Layout from '../../components/Layout';
+import { appColors } from '../../config/colors.js';
 import { FileText, ScanText, Database, Workflow, Sparkles } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/card';
 
@@ -34,7 +35,7 @@ const steps = [
 export default function Architecture() {
   return (
     <Layout role="student">
-      <div className="space-y-8">
+      <div className="space-y-8" style={{ backgroundColor: appColors.mainBackground, minHeight: '100vh', padding: '1.5rem' }}>
         <div className="space-y-1">
           <h1 className="text-2xl font-semibold md:text-3xl">System architecture</h1>
           <p className="text-sm text-[#9CA3AF] md:text-base">
@@ -57,7 +58,7 @@ export default function Architecture() {
                   {!isLast && (
                     <div className="absolute left-4 top-8 h-full w-px bg-[#22D3EE]/40 opacity-60" />
                   )}
-                  <Card className="flex-1 rounded-xl border border-[#1F2937] bg-[#111827] shadow-md shadow-black/20">
+                  <Card className="flex-1 rounded-xl border shadow-md shadow-black/20" style={{ backgroundColor: appColors.sidebarBackground, borderColor: appColors.cardBorder }}>
                     <CardHeader className="pb-2">
                       <CardTitle className="text-sm font-semibold text-[#F9FAFB]">
                         {index + 1}. {step.title}
